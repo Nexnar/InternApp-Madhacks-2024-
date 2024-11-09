@@ -1,9 +1,10 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
+import React from "react";
+import { Image, StyleSheet, Platform, Button } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+
 
 export default function HomeScreen() {
   return (
@@ -19,6 +20,11 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+      <Button
+        title="Learn More"
+        color="#841584"
+        accessibilityLabel="Learn more about this purple button"
+      />
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
