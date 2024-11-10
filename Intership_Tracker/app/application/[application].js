@@ -55,17 +55,32 @@ export default function TabTwoScreen() {
     }, [])
   );
 
-  
+  const stat = applicationData && applicationData.status ? applicationData.status.charAt(0).toUpperCase() : '';
+  let color = '';
+  if (stat === 'P') {
+    color = 'green';
+  } else if (stat === 'A') {
+    color = 'yellow';
+  } else if (stat === 'R') {
+    color = 'red';
+  }
 
   return (
     <SafeAreaProvider style = {styles.mainDiv}>
       
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {[styles.text, styles.title]}>Job Information</Text>
-        <Text style = {styles.text}>Application for company : "{applicationData.company}"</Text>
-        <Text style = {styles.text}>Application Status : {applicationData.status}</Text>
-        <Text style = {styles.text}>Position : {applicationData.Job_title}</Text>
-        <Text style = {styles.text}>Details : {applicationData.extraNotes}</Text>
+      <SafeAreaView style = {[styles.div, styles.innerDiv]}>
+        <View style = {{width: "70%"}}>
+          <Text style = {[styles.text, styles.title]}>Job Information</Text>
+          <Text style = {styles.text}>Company : "{applicationData.company}"</Text>
+          <Text style = {styles.text}>Position : {applicationData.Job_title}</Text>
+          <Text style = {styles.text}>Application Status : {applicationData.status}</Text>
+          <Text style = {styles.text}>Details : {applicationData.extraNotes}</Text>
+        </View>
+        <View style = {{width: "30%"}}>
+          <View style = {[styles.circle]}>
+            <Text style = {[styles.circleTxt]}>{stat}</Text>
+          </View>
+        </View>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -79,8 +94,30 @@ const styles = StyleSheet.create({
     padding: 10,
     
   },
+  innerDiv:{
+    backgroundColor:"black",
+    margin: 15,
+    borderRadius: 25,
+    flexDirection: "row"
+  },
   mainDiv:{
-    
+    width: "100%",
+    textAlign: "center"
+  },
+  circle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 10,
+    borderBlockColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 5
+  },
+  circleTxt: {
+    fontSize: 45,
+    color: "white"
   },
   titleDiv:{
     flex: 1,
