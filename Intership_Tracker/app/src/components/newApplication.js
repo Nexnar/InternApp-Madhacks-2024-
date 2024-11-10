@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from 'react';
 import { applicationFactory, writeToDatabase } from '@/scripts/database';
-import React, { useState } from 'react';
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 
 const NewApplication = ({ navigateBack }) => {
@@ -7,6 +7,7 @@ const NewApplication = ({ navigateBack }) => {
   const [showDropdown, setShowDropdown] = useState(false); // State to control visibility of dropdown
   const [company, setCompany] = useState('');
   const [jobTitle, setJobTitle] = useState('');
+  const [userLink, setUserLink] = useState('');
 
   const statusData = [
     { label: 'PENDING', value: 'PENDING' },
@@ -30,6 +31,7 @@ const NewApplication = ({ navigateBack }) => {
     handleWritingData();
   };
 
+
   return (
     <View style={styles.container}>
       {/* Go Back Button at the top-left corner */}
@@ -47,7 +49,7 @@ const NewApplication = ({ navigateBack }) => {
         onChangeText={setCompany} // Track the company input
       />
       <TextInput 
-        secureTextEntry={true} 
+        secureTextEntry={false} 
         placeholder="Job Title" 
         style={styles.inputStyle} 
         value={jobTitle}
@@ -82,9 +84,109 @@ const NewApplication = ({ navigateBack }) => {
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+
+      {/* Submit Link Button */}
+      <TextInput 
+        placeholder="  link" 
+        style={styles.inputStyle} 
+        value={userLink}
+        onChangeText={setUserLink} // Track the job title input
+      />
+      {/* Submit Link Button */}
+      <TouchableOpacity style={styles.submitButtonAlt} onPress={
+          () => {
+            console.log(userLink); 
+            RequestLinkData(userLink, setJobTitle, setCompany);
+            setUserLink('');
+          }
+        }>
+        <Text style={styles.submitButtonText}>Autofill with Link</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+function RequestLinkData(link, setJobTitle, setCompany) {
+  //supported careers websites:
+  // https://www.google.com/about/careers/applications/jobs/results/
+  // https://www.simplyhired.com/job/
+  console.log('Link provided: ' + link);
+
+  let jobBoard = '';
+
+  let jobTitle = '';
+  let company = '';
+  let status = '';
+
+  //check if url is from supported domain
+  if (link.startsWith("https://www.google.com/about/careers/applications/jobs/results/")) {
+    jobBoard = "Google";
+    company = "Google";
+  } else if (link.startsWith("https://www.simplyhired.com/job/")) {
+    jobBoard = "SimplyHired";
+    company = "n/a"; //fix later when web crawling isnt so daunting
+  } else if (link.startsWith("https://www.simplyhired.com/search?")) {
+    Alert.alert('Error', 'Search page not supported, please submit a direct listing link from SimplyHired', [{text: 'OK'}]);
+    return;
+  } else {
+    Alert.alert('Error', 'Job not detected. Please enter a link from a supported job board', [{text: 'OK'}]);
+    return;
+  }
+
+  let htmlResponse = '';
+  try {
+    fetch(link)
+      .then(response => response.text()) // get the response as text (HTML)
+      .then(html => {
+        //console.log(html); // log the HTML Data
+        htmlResponse = html;
+        const jobTitle = processHTMLtitle(htmlResponse, jobBoard)
+        const company = processHTMLcompany(htmlResponse, jobBoard)
+        console.log('Returning:', [jobTitle, company]);
+        setJobTitle(jobTitle);
+        setCompany(company);
+
+        return;
+      });
+  } catch (error) {
+    console.error("err: " + error);
+  }
+}
+
+function processHTMLtitle(srcHTML, jobBoard) {
+  if (jobBoard == "Google") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pJobTitle = (match && match[1].trim()) ?? '';
+    return pJobTitle
+  } else if (jobBoard == "SimplyHired") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pJobTitle = (match && match[1].trim()) ?? '';
+    const dashCharIndex = pJobTitle.lastIndexOf('-');
+    if (dashCharIndex === -1) {
+      return '';
+    }
+    return pJobTitle.substring(0, dashCharIndex).trim();
+  }
+}
+
+function processHTMLcompany(srcHTML, jobBoard) {
+  if (jobBoard == "Google") {
+    return "Google";
+  } else if (jobBoard == "SimplyHired") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pCompany = (match && match[1].trim()) ?? '';
+    const dashCharIndex = pCompany.lastIndexOf('-');
+    const barCharIndex = pCompany.lastIndexOf('|');
+    if (dashCharIndex === -1 || barCharIndex === -1) {
+      return '';
+    }
+    const title = pCompany.substring(dashCharIndex + 1, barCharIndex).trim();
+    return title;
+  }
+}
 
 export default NewApplication;
 
@@ -149,7 +251,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',  // Center the text inside the button
   },
   goBackText: {
-    fontSize: 24,
+    fontSize: 18,
     color: '#fff',
   },
   // Submit Button Styles
@@ -161,8 +263,17 @@ const styles = StyleSheet.create({
     width: 300,
     alignItems: 'center',
   },
+  // Submit Button Styles
+  submitButtonAlt: {
+    marginTop: 30,
+    padding: 15,
+    backgroundColor: '#FF7777',
+    borderRadius: 10,
+    width: 300,
+    alignItems: 'center',
+  },
   submitButtonText: {
     fontSize: 18,
     color: 'white',
-  },
+  }
 });
