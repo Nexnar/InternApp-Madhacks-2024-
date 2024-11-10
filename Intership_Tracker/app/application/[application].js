@@ -61,12 +61,9 @@ export default function TabTwoScreen() {
     <SafeAreaProvider style = {styles.mainDiv}>
       
       <SafeAreaView style = {[styles.div]}>
-        <Text style = {[styles.text, styles.title]}>General Data</Text>
+        <Text style = {[styles.text, styles.title]}>Job Information</Text>
         <Text style = {styles.text}>Application for company : "{applicationData.company}"</Text>
         <Text style = {styles.text}>Application Status : {applicationData.status}</Text>
-      </SafeAreaView>
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {[styles.text, styles.title]}>Job Information</Text>
         <Text style = {styles.text}>Position : {applicationData.Job_title}</Text>
         <Text style = {styles.text}>Details : {applicationData.extraNotes}</Text>
       </SafeAreaView>
