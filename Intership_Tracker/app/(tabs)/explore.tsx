@@ -17,7 +17,8 @@ export default function TabTwoScreen() {
   const [t, setT] = useState(0);
 
   async function databaseHandler(){
-    let databaseOutput = await readFile() 
+    let databaseOutput = await readFile()
+    
     databaseOutput.apps.forEach((e) => {
       setT(num => {return num + 1});
       if(e.status === "ACCEPTED"){
@@ -37,11 +38,14 @@ export default function TabTwoScreen() {
   
   useFocusEffect(
     React.useCallback(() => {
-      setA(0);
-      setR(0);
-      setP(0);
-      setI(0);
-      setT(0);
+      setA(0)
+      setR(0)
+      setP(0)
+      setI(0)
+      setT(0)
+
+
+
       databaseHandler();
         return () => {
         };

@@ -15,6 +15,9 @@ const PieChart = ({ data }) => {
       <Svg width={radius * 2} height={radius * 2}>
         <G x={radius} y={radius}>
           {data.map((item, index) => {
+            if(total === 0 || item === undefined){
+              return;
+            }
             // Calculate the angle for the current slice
             const angle = (item.value / total) * 360;
   
