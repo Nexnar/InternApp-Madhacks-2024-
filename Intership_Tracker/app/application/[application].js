@@ -12,13 +12,14 @@ import { Header } from 'react-native/Libraries/NewAppScreen';
 
 export default function TabTwoScreen() {
   // get page param -> name the page
-  const {id} = useLocalSearchParams();
+  console.log(useLocalSearchParams())
+  const {application} = useLocalSearchParams();
 
   // set the title of the page
   const navigation = useNavigation();
   useEffect(() => {
     navigation.setOptions({
-      title: `Application For "${id}"`, // Set or update the title here
+      title: `Application For "${application}"`, // Set or update the title here
       
     });
   }, [navigation]);
@@ -49,7 +50,7 @@ export default function TabTwoScreen() {
       
       <SafeAreaView style = {[styles.div]}>
         <Text style = {[styles.text, styles.title]}>General Data</Text>
-        <Text style = {styles.text}>Application for company : "{id}"</Text>
+        <Text style = {styles.text}>Application for company : "{application}"</Text>
         <Text style = {styles.text}>Application Status : </Text>
         <Text style = {styles.text}>(As of)</Text>
       </SafeAreaView>

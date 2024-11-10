@@ -13,27 +13,28 @@ import {
   ScrollView,
 } from 'react-native';
 import Task from './Task'; // Ensure this is the correct path
+import { useRouter } from 'expo-router';
 
 export default function Homepage({ navigateToNewPage }) {
+  const router = useRouter();
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
 
+  // IMPORT DATA FROM Database
   async function databaseHandler(){
     await writeExampleDatabase()
     let databaseOutput = await readFile() 
     let apps = [];
-    //setDatabase(output.apps);
-    //console.log("printing the database " + databaseOutput.apps)
+
 
     databaseOutput.apps.forEach((e) => {
       console.log("for looping each title " + e.company)
       apps.push(e.company);
     })
-    //console.log(apps);
-    setTaskItems(apps)
-    //console.log("task items " + taskItems);
-  }
 
+    setTaskItems(apps)
+  }
+  // use effect to only run once
   useEffect(() => {
     databaseHandler();
   }, [])
@@ -49,7 +50,7 @@ export default function Homepage({ navigateToNewPage }) {
 
   return (
     <View style={styles.container}>
-      {/* Scrollable area for tasks */}
+      {/* TASK LIST */}
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -59,7 +60,7 @@ export default function Homepage({ navigateToNewPage }) {
           <View style={styles.items}>
             {/* Loop through the tasks and render each one */}
             {taskItems.map((item, index) => (
-              <TouchableOpacity key={index} onPress={navigateToNewPage}>
+              <TouchableOpacity key={index} onPress={() => {router.navigate(`/application/${item}`, {id: item})}}>
                 <Task text={item} />
               </TouchableOpacity>
             ))}
@@ -69,13 +70,15 @@ export default function Homepage({ navigateToNewPage }) {
 
       {/* Input and add task area */}
       <KeyboardAvoidingView behavior="padding" style={styles.writeTaskWrapper}>
+        {/* TEXT INPUT*/}
         <TextInput
           style={styles.input}
           placeholder="Write a task"
           value={task}
           onChangeText={(text) => setTask(text)}
         />
-        <TouchableOpacity onPress={handleAddTask}>
+        {/* TEXT INPUT*/}
+        <TouchableOpacity onPress={navigateToNewPage}>
           <View style={styles.addWrapper}>
             <Text style={styles.addText}>+</Text>
           </View>

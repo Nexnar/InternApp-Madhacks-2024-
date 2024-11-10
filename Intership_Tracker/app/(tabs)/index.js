@@ -23,6 +23,10 @@ export default function HomeScreen() {
     setCurrentPage('NewPage');
   };
 
+  const navigateToInformationPage = () => {
+    setCurrentPage('InformationPage');
+  };
+
   // Navigate back to Homepage
   const navigateBack = () => {
     setCurrentPage('Home');
@@ -30,11 +34,16 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {currentPage === 'Home' ? (
-        <Homepage navigateToNewPage={navigateToNewPage} />
-      ) : currentPage === 'NewPage' ? (
-        <NewApplication navigateBack={navigateBack} />
-      ) : null}
+      {
+        currentPage === 'Home' ? (
+          <Homepage navigateToNewPage={navigateToNewPage} />
+        ) : currentPage === 'NewPage' ? (
+          <NewApplication navigateBack={navigateBack} />
+        ) : currentPage === "InformationPage" ? (
+          null
+        ) : null}
+
+      
     </View>
   );
 }
