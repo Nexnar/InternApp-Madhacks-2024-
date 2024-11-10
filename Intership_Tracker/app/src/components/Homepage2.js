@@ -22,13 +22,13 @@ export default function Homepage({ navigateToNewPage }) {
 
   // IMPORT DATA FROM Database
   async function databaseHandler(){
-    await writeExampleDatabase()
+    //await writeExampleDatabase()
     let databaseOutput = await readFile() 
     let apps = [];
 
 
     databaseOutput.apps.forEach((e) => {
-      console.log("for looping each title " + e.company)
+      //console.log("for looping each title " + e.company)
       apps.push(e.company);
     })
 
@@ -69,14 +69,22 @@ export default function Homepage({ navigateToNewPage }) {
       </ScrollView>
 
       {/* Input and add task area */}
-      <KeyboardAvoidingView behavior="padding" style={styles.writeTaskWrapper}>
-        {/* TEXT INPUT*/}
-        <TextInput
-          style={styles.input}
-          placeholder="Write a task"
-          value={task}
-          onChangeText={(text) => setTask(text)}
-        />
+      <KeyboardAvoidingView behavior="padding" style={[styles.writeTaskWrapper , 
+        {
+          alignContent: "flex-end",
+          alignItems: "flex-end",
+          flex:1
+        }]}>
+        {
+          /* OLD TEXT CODE
+              <TextInput
+                style={styles.input}
+                placeholder="Write a task"
+                value={task}
+                onChangeText={(text) => setTask(text)}
+              />
+          */
+        }
         {/* TEXT INPUT*/}
         <TouchableOpacity onPress={navigateToNewPage}>
           <View style={styles.addWrapper}>
@@ -116,7 +124,8 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center',
+    alignItems: "flex-end",
+    flexDirection:"row"
   },
   input: {
     paddingVertical: 15,

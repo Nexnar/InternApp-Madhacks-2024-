@@ -13,18 +13,16 @@ export default function TabTwoScreen() {
   console.log(useLocalSearchParams())
   const {application} = useLocalSearchParams();
   const [applicationData, setApplicationData] = useState("");
-  let dataFound = false;
+
 
    // IMPORT DATA FROM Database
    async function databaseHandler(){
     let databaseOutput = await readFile() 
   
-
     databaseOutput.apps.forEach((e) => {
       console.log("for looping each title " + e.company)
       if(e.company === application){
         setApplicationData(e);
-        datafound = true;
         return;
       }
     })
@@ -47,12 +45,6 @@ export default function TabTwoScreen() {
   // sets on exit and on enter hooks
   useFocusEffect(
     React.useCallback(() => {
-      // Code to run when the screen is focused
-      Alert.alert(
-        "Loading Data!", // Title of the alert
-        "This is an alert message", // Message
-      );
-
       return () => {
         // Cleanup code when the screen loses focus
         Alert.alert(
@@ -69,12 +61,9 @@ export default function TabTwoScreen() {
     <SafeAreaProvider style = {styles.mainDiv}>
       
       <SafeAreaView style = {[styles.div]}>
-        <Text style = {[styles.text, styles.title]}>General Data</Text>
+        <Text style = {[styles.text, styles.title]}>Job Information</Text>
         <Text style = {styles.text}>Application for company : "{applicationData.company}"</Text>
         <Text style = {styles.text}>Application Status : {applicationData.status}</Text>
-      </SafeAreaView>
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {[styles.text, styles.title]}>Job Information</Text>
         <Text style = {styles.text}>Position : {applicationData.Job_title}</Text>
         <Text style = {styles.text}>Details : {applicationData.extraNotes}</Text>
       </SafeAreaView>

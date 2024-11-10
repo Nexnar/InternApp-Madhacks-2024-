@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
+=======
+import { applicationFactory, writeToDatabase } from '@/scripts/database';
+import React, { useState } from 'react';
+>>>>>>> ff77d60b0a1cfe9cc9d0353b2d6997d167a60377
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 
 const NewApplication = ({ navigateBack }) => {
@@ -19,10 +24,15 @@ const NewApplication = ({ navigateBack }) => {
     setStatus(value);      
     setShowDropdown(false);  // Close dropdown after selection
   };
+  async function handleWritingData(){
+    await writeToDatabase(applicationFactory(company, jobTitle, status));
+    navigateBack();
+  }
 
   const handleSubmit = () => {
     // Here you can later incorporate the data with your backend or state
-    Alert.alert("Form Submitted", `Company: ${company}\nJob Title: ${jobTitle}\nStatus: ${status}`);
+    //Alert.alert("Form Submitted", `Company: ${company}\nJob Title: ${jobTitle}\nStatus: ${status}`);
+    handleWritingData();
   };
 
 
