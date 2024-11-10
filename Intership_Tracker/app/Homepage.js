@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView } from 'react-native';
-import Task from './Task';
+import Task from './src/components/Task';
 import {useRouter } from 'expo-router';
 import { writeExampleDatabase, readFile } from "@/scripts/database";
 

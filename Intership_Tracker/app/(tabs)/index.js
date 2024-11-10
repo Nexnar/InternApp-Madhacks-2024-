@@ -1,3 +1,5 @@
+import Homepage from '../src/components/Homepage2'; // Ensure this is the correct path
+import NewApplication from '../src/components/newApplication'; // Import the new application page
 import React, { useState } from "react";
 import {Link} from "expo-router";
 import { Image, StyleSheet, Text,View, Platform, Button, Pressable, Alert } from 'react-native';
@@ -14,7 +16,41 @@ import { useFocusEffect } from '@react-navigation/native';
 
 export default function HomeScreen() {
   // sets on exit and on enter hooks
+  const [currentPage, setCurrentPage] = useState('Home'); // Tracks which page is being shown
 
+  // Function to switch to a new page (when a task is pressed)
+  const navigateToNewPage = () => {
+    setCurrentPage('NewPage');
+  };
+
+  // Navigate back to Homepage
+  const navigateBack = () => {
+    setCurrentPage('Home');
+  };
+
+  return (
+    <View style={styles.container}>
+      {currentPage === 'Home' ? (
+        <Homepage navigateToNewPage={navigateToNewPage} />
+      ) : currentPage === 'NewPage' ? (
+        <NewApplication navigateBack={navigateBack} />
+      ) : null}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#202020', // Consistent background color
+  },
+});
+
+
+
+
+/// OLD MAIN PAGE STUFF
+/*
 
   return (
     <SafeAreaProvider style = {{flexDirection: "column"}}>
@@ -69,3 +105,4 @@ const styles = StyleSheet.create({
     padding: 10
   }
 });
+*/
