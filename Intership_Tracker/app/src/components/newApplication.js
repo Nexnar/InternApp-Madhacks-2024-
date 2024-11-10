@@ -91,7 +91,7 @@ const NewApplication = ({ navigateBack }) => {
 
       {/* Submit Link Button */}
       <TextInput 
-        placeholder=" link" 
+        placeholder=" link"
         style={styles.inputStyle} 
         value={userLink}
         onChangeText={setUserLink} // Track the job title input
