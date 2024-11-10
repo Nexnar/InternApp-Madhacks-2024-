@@ -22,7 +22,7 @@ export default function Homepage({ navigateToNewPage }) {
 
   // IMPORT DATA FROM Database
   async function databaseHandler(){
-    //await writeExampleDatabase()
+    await writeExampleDatabase()
     let databaseOutput = await readFile() 
     let apps = [];
 
