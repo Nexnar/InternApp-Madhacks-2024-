@@ -62,7 +62,7 @@ export async function writeExampleDatabase(){
   content.apps.push(applicationFactory("Roblox", "Scammer", "Applied", "nothing"))
   content.apps.push(applicationFactory("John Deer", "Engineer", "Note Applied", "must apply by the 25th"))
   content = JSON.stringify(content);
-  //console.log(content);
+  console.log(content);
 
   const fileUri = FileSystem.documentDirectory + 'database.json';
   

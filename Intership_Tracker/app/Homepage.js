@@ -12,15 +12,18 @@ export default function Homepage() {
   
   async function databaseHandler(){
     await writeExampleDatabase()
-    let output = await readFile() 
-    setDatabase(output.apps);
-    console.log("printing the database " + database)
-    database.forEach((e) => {
-      console.log("for looping each title " + e)
-      setTask(e.company);
-      handleAddTask();
+    let databaseOutput = await readFile() 
+    let apps = [];
+    //setDatabase(output.apps);
+    //console.log("printing the database " + databaseOutput.apps)
+
+    databaseOutput.apps.forEach((e) => {
+      console.log("for looping each title " + e.company)
+      apps.push(e.company);
     })
-    console.log(taskItems);
+    //console.log(apps);
+    setTaskItems(apps)
+    //console.log("task items " + taskItems);
   }
 
   useEffect(() => {
@@ -29,7 +32,7 @@ export default function Homepage() {
 
   const handleAddTask = () => {
     Keyboard.dismiss();
-    setTaskItems([...taskItems, task])
+    setTaskItems((prevItems) => [...prevItems, task])
     setTask(null);
   }
 
