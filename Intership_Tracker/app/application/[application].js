@@ -145,7 +145,7 @@ export default function TabTwoScreen() {
           style={styles.smallInputStyle} 
           value= {newJobTitle}
           multiline = {false}
-          onChangeText={newJobTitle}
+          onChangeText={setNewJobTitle}
           />
         </SafeAreaView>
         <SafeAreaView style = {[styles.div]}>
