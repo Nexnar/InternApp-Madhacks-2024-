@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { applicationFactory, writeToDatabase } from '@/scripts/database';
-import { Text, StyleSheet, View, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { Text, StyleSheet, View, TextInput, TouchableOpacity, FlatList, Alert, Linking } from 'react-native';
 
 const NewApplication = ({ navigateBack }) => {
   const [status, setStatus] = useState('PENDING'); 
@@ -91,7 +91,7 @@ const NewApplication = ({ navigateBack }) => {
 
       {/* Submit Link Button */}
       <TextInput 
-        placeholder="  link" 
+        placeholder=" link" 
         style={styles.inputStyle} 
         value={userLink}
         onChangeText={setUserLink} // Track the job title input
@@ -106,15 +106,36 @@ const NewApplication = ({ navigateBack }) => {
         }>
         <Text style={styles.submitButtonText}>Autofill with Link</Text>
       </TouchableOpacity>
+      {/* Approved Sites Link */}
+      <TouchableOpacity onPress={approvedSites}>
+        <Text style={styles.hprlink}>(view compatible websites)</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+function approvedSites() {
+  //Linking.openURL('https://example.com');
+  Alert.alert(
+    'Working Sites',
+    'Google.\n\nDiversityJobs.\n\nSimplyHired.',
+    [
+      {
+        text: 'OK',
+        onPress: () => console.log('OK Pressed'),
+      },
+    ],
+    { cancelable: false }
+  );
+}
 
 function RequestLinkData(link, setJobTitle, setCompany) {
   //supported careers websites:
   // https://www.google.com/about/careers/applications/jobs/results/
   // https://www.simplyhired.com/job/
-  console.log('Link provided: ' + link);
+  // https://diversityjobs.com/
+  
+  // console.log('Link provided: ' + link);
 
   let jobBoard = '';
 
@@ -123,15 +144,20 @@ function RequestLinkData(link, setJobTitle, setCompany) {
   let status = '';
 
   //check if url is from supported domain
-  if (link.startsWith("https://www.google.com/about/careers/applications/jobs/results/")) {
+  if (link == "https://www.google.com/about/careers/applications/jobs/results/") {
+    Alert.alert('Error', 'Search page not supported, please submit a direct listing link from Google', [{text: 'OK'}]);
+    return;
+  } else if (link.startsWith("https://www.google.com/about/careers/applications/jobs/results/")) {
     jobBoard = "Google";
     company = "Google";
-  } else if (link.startsWith("https://www.simplyhired.com/job/")) {
-    jobBoard = "SimplyHired";
-    company = "n/a"; //fix later when web crawling isnt so daunting
   } else if (link.startsWith("https://www.simplyhired.com/search?")) {
     Alert.alert('Error', 'Search page not supported, please submit a direct listing link from SimplyHired', [{text: 'OK'}]);
     return;
+  } else if (link.startsWith("https://www.simplyhired.com/job/")) {
+    jobBoard = "SimplyHired";
+    company = "n/a"; //fix later when web crawling isnt so daunting
+  } else if (link.startsWith("https://diversityjobs.com/career/")) {
+    jobBoard = "DiversityJobs";
   } else {
     Alert.alert('Error', 'Job not detected. Please enter a link from a supported job board', [{text: 'OK'}]);
     return;
@@ -146,7 +172,7 @@ function RequestLinkData(link, setJobTitle, setCompany) {
         htmlResponse = html;
         const jobTitle = processHTMLtitle(htmlResponse, jobBoard)
         const company = processHTMLcompany(htmlResponse, jobBoard)
-        console.log('Returning:', [jobTitle, company]);
+        //console.log('Returning:', [jobTitle, company]);
         setJobTitle(jobTitle);
         setCompany(company);
 
@@ -172,6 +198,15 @@ function processHTMLtitle(srcHTML, jobBoard) {
       return '';
     }
     return pJobTitle.substring(0, dashCharIndex).trim();
+  } else if (jobBoard == "DiversityJobs") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pJobTitle = (match && match[1].trim()) ?? '';
+    const dashCharIndex = pJobTitle.lastIndexOf(' job in ');
+    if (dashCharIndex === -1) {
+      return '';
+    }
+    return pJobTitle.substring(0, dashCharIndex).trim();
   }
 }
 
@@ -188,6 +223,17 @@ function processHTMLcompany(srcHTML, jobBoard) {
       return '';
     }
     const title = pCompany.substring(dashCharIndex + 1, barCharIndex).trim();
+    return title;
+  } else if (jobBoard == "DiversityJobs") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pCompany = (match && match[1].trim()) ?? '';
+    const dashCharIndex = pCompany.lastIndexOf(' at ');
+    const barCharIndex = pCompany.lastIndexOf(' | ');
+    if (dashCharIndex === -1 || barCharIndex === -1) {
+      return '';
+    }
+    const title = pCompany.substring(dashCharIndex + 4, barCharIndex).trim();
     return title;
   }
 }
@@ -257,6 +303,10 @@ const styles = StyleSheet.create({
   goBackText: {
     fontSize: 18,
     color: '#fff',
+  },
+  hprlink: {
+    color: 'blue',
+    paddingTop: 10
   },
   // Submit Button Styles
   submitButton: {
