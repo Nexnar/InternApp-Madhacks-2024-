@@ -1,6 +1,6 @@
 
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import { StyleSheet, Text, View, TextInput, Alert, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput, Alert, TouchableOpacity} from 'react-native';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -20,6 +20,14 @@ export default function TabTwoScreen() {
   const [newJobTitle, setNewJobTitle] = useState("");
   const [newStatus, setNewStatus] = useState("");
   const [newExtraNotes, setNewExtraNotes] = useState("");
+  const [dropDownVis, setDropDownVis] = useState(false);
+
+  const statusData = [
+    { label: 'PENDING', value: 'PENDING' },
+    { label: 'ACCEPTED', value: 'ACCEPTED' },
+    { label: 'REJECTED', value: 'REJECTED' },
+    { label: 'INTERVIEW', value: 'INTERVIEW'},
+  ];
 
 
    // IMPORT DATA FROM Database
@@ -82,15 +90,61 @@ export default function TabTwoScreen() {
 
   return (
     <SafeAreaProvider style = {styles.mainDiv}>
+      {/* TITLE CARD */}
+      <Text style = {[styles.text, styles.title]}>Application Information</Text>
       
+      {/* COMPANY */}
       <SafeAreaView style = {[styles.div]}>
-        <Text style = {[styles.text, styles.title]}>Job Information</Text>
-        <Text style = {styles.text}>Application for company : "{newCompany}"</Text>
-        <Text style = {styles.text}>Application Status : {newStatus}</Text>
-        <Text style = {styles.text}>Job Title : {newJobTitle}</Text>
-        <Text style = {styles.text}>Extra Notes:</Text>
+        <Text style = {styles.text}>Company Name"</Text>
         <TextInput 
         placeholder="Company" 
+        style={styles.smallInputStyle} 
+        value= {newCompany}
+        multiline = {false}
+        onChangeText={setNewCompany}
+        />
+      </SafeAreaView>
+
+      {/* Status */}
+      <SafeAreaView style = {[styles.div]}>
+        <Text style = {styles.text}>Application Status</Text>
+        <TouchableOpacity
+        style={styles.dropdownButton}
+        onPress={() => setDropDownVis(!dropDownVis)} // Toggle dropdown visibility
+      >
+        <Text style={styles.dropdownButtonText}>Status: {newStatus}</Text>
+      </TouchableOpacity>
+        {
+          dropDownVis && (
+            <FlatList
+          data={statusData}
+          keyExtractor={(item) => item.value}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.dropdownItem}
+              onPress={() => setNewStatus(item.value)}
+            >
+              <Text style={styles.dropdownItemText}>{item.label}</Text>
+            </TouchableOpacity>
+          )}
+        />
+          )
+        }
+      </SafeAreaView>
+      <SafeAreaView style = {[styles.div]}>
+        <Text style = {styles.text}>Job Title</Text>
+        <TextInput 
+        placeholder="job title" 
+        style={styles.smallInputStyle} 
+        value= {newJobTitle}
+        multiline = {false}
+        onChangeText={newJobTitle}
+        />
+      </SafeAreaView>
+      <SafeAreaView style = {[styles.div]}>
+        <Text style = {styles.text}>Extra Notes:</Text>
+        <TextInput 
+        placeholder="extraNotes" 
         style={styles.inputStyle} 
         value= {newExtraNotes}
         multiline = {true}
@@ -142,6 +196,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     textAlignVertical:"top"
   },
+  smallInputStyle: {
+    marginTop: 5,
+    width: 300,
+    height: 30,
+    paddingHorizontal: 10,
+    borderRadius: 2,
+    backgroundColor: 'white',
+    textAlignVertical:"center"
+  },
   submitButton: {
     marginTop: 30,
     padding: 15,
@@ -153,5 +216,30 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 18,
     color: 'white',
+  },
+
+  dropdownButton: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: 'gray',
+    borderRadius: 10,
+    width: 300,
+    alignItems: 'center',
+  },
+  dropdownButtonText: {
+    fontSize: 18,
+    color: 'white',
+  },
+  // Dropdown item style
+  dropdownItem: {
+    padding: 15,
+    backgroundColor: '#f0f0f0',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    width: 300,
+  },
+  dropdownItemText: {
+    fontSize: 18,
+    color: '#356859',
   },
 });
