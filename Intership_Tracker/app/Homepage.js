@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView } from 'react-native';
 import Task from './Task';
+import {useRouter } from 'expo-router';
 
 export default function Homepage() {
+  const router = useRouter();
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
 
@@ -35,7 +37,7 @@ export default function Homepage() {
           {
             taskItems.map((item, index) => {
               return (
-                <TouchableOpacity key={index}  onPress={() => completeTask(index)}>
+                <TouchableOpacity key={index}  onPress={() => router.push(`application/[application]`, {id:index})}>
                   <Task text={item} /> 
                 </TouchableOpacity>
               )
