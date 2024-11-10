@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, Alert} from 'react-native';
 import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import {checkFilesSystem, createDatabase, readFile, writeToDatabase} from "../../scripts/database";
 
 
 
@@ -27,6 +28,26 @@ export default function NewAppPage() {
   const [recruiterName, setRecruiterName] = useState("...");
   const [recruiterEmail, setRecruiterEmail] = useState("...");
 
+  async function handleFileSystem(){
+    await createDatabase();
+    const check = await checkFilesSystem();
+    if(check == false){
+        console.log("making new database!");
+        await createDatabase();
+    } else {
+      console.log("extracting current database");
+      const data = readFile();
+      console.log(data);
+    }
+  }
+  async function databaseWriter(){
+    const obj = {
+      "company" : company,
+      "jobLocation" : jobLocation
+    }
+
+    await writeToDatabase(obj);
+  }
 
 
   // set the title of the page
@@ -40,13 +61,11 @@ export default function NewAppPage() {
   // sets on exit and on enter hooks
   useFocusEffect(
     React.useCallback(() => {
-
+      handleFileSystem();
+      
       return () => {
         // Cleanup code when the screen loses focus
-        Alert.alert(
-          "Saving Data!", // Title of the alert
-          `company : ${company} \napplication date : ${applicationDate}\napplication status : ${appStatus}`, // Message
-        );
+        databaseWriter()
       };
     }, [])
   );

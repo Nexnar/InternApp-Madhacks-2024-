@@ -1,4 +1,6 @@
-import React from "react";
+import Homepage from '../src/components/Homepage2'; // Ensure this is the correct path
+import NewApplication from '../src/components/newApplication'; // Import the new application page
+import React, { useState } from "react";
 import {Link} from "expo-router";
 import { Image, StyleSheet, Text,View, Platform, Button, Pressable, Alert } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
@@ -7,9 +9,58 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import HomePage from "../Homepage";
+import { writeExampleDatabase, readFile } from "@/scripts/database";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function HomeScreen() {
+  // sets on exit and on enter hooks
+  const [currentPage, setCurrentPage] = useState('Home'); // Tracks which page is being shown
+
+  // Function to switch to a new page (when a task is pressed)
+  const navigateToNewPage = () => {
+    setCurrentPage('NewPage');
+  };
+
+  const navigateToInformationPage = () => {
+    setCurrentPage('InformationPage');
+  };
+
+  // Navigate back to Homepage
+  const navigateBack = () => {
+    setCurrentPage('Home');
+  };
+
+  return (
+    <View style={styles.container}>
+      {
+        currentPage === 'Home' ? (
+          <Homepage navigateToNewPage={navigateToNewPage} />
+        ) : currentPage === 'NewPage' ? (
+          <NewApplication navigateBack={navigateBack} />
+        ) : currentPage === "InformationPage" ? (
+          null
+        ) : null}
+
+      
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#202020', // Consistent background color
+  },
+});
+
+
+
+
+/// OLD MAIN PAGE STUFF
+/*
+
   return (
     <SafeAreaProvider style = {{flexDirection: "column"}}>
 
@@ -28,12 +79,10 @@ export default function HomeScreen() {
           </View>
         </Pressable>
       </SafeAreaProvider>
-      
-      <SafeAreaView style = {styles.bodyDiv}>
-        <Link href = {{pathname: "../application/application", params: {id:"test"}}} style = {styles.text}> test </Link>
-        <Link href = {{pathname: "../application/application", params: {id:"bob"}}} style = {styles.text}> bob </Link>
-      </SafeAreaView>
 
+      <SafeAreaProvider style = {{flex:4}}>
+      <HomePage></HomePage>
+      </SafeAreaProvider>
     </SafeAreaProvider>
   );
 }
@@ -50,7 +99,7 @@ const styles = StyleSheet.create({
     color: "white"
   },
   bodyDiv:{
-    flex: 6
+    flex: 1
   },
   text:{
     color: "white"
@@ -65,3 +114,4 @@ const styles = StyleSheet.create({
     padding: 10
   }
 });
+*/
