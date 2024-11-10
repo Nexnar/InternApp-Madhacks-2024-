@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, Alert} from 'react-native';
 import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import * as FileSystem from "expo-file-system";
+import {checkFilesSystem, createDatabase, readFile, writeToDatabase} from "../../scripts/database";
 
 
 
@@ -28,6 +28,25 @@ export default function NewAppPage() {
   const [recruiterName, setRecruiterName] = useState("...");
   const [recruiterEmail, setRecruiterEmail] = useState("...");
 
+  async function handleFileSystem(){
+    const check = await checkFilesSystem();
+    if(check == false){
+        console.log("making new database!");
+        await createDatabase();
+    } else {
+      console.log("extracting current database");
+      const data = readFile();
+      console.log(data);
+    }
+  }
+  async function databaseWriter(){
+    const obj = {
+      "company" : company,
+      "jobLocation" : jobLocation
+    }
+
+    await writeToDatabase(obj);
+  }
 
 
   // set the title of the page
@@ -41,10 +60,11 @@ export default function NewAppPage() {
   // sets on exit and on enter hooks
   useFocusEffect(
     React.useCallback(() => {
-
+      handleFileSystem();
+      
       return () => {
         // Cleanup code when the screen loses focus
-        writeFile();
+        databaseWriter()
       };
     }, [])
   );
@@ -106,41 +126,6 @@ export default function NewAppPage() {
 
     </SafeAreaProvider>
   );
-}
-
-async function writeFile() {
-  const fileUri = FileSystem.documentDirectory + 'database.json';
-  const content = 'Hello, this is a sample text file.';
-
-  try {
-    await FileSystem.writeAsStringAsync(fileUri, content);
-    console.log('File written successfully!');
-  } catch (error) {
-    console.error('Error writing file:', error);
-  }
-
-}
-
-async function checkFilesSystem(){
-  try {
-    const directoryUri = FileSystem.documentDirectory;
-    const fileList = await FileSystem.readDirectoryAsync(directoryUri);
-    console.log('Files:', fileList);
-    return fileList.indexOf("database.json");
-  } catch (error) {
-    console.error('Error reading directory:', error);
-    return false;
-  }
-}
-
-async function readFile(){
-  try {
-    const fileUri = FileSystem.documentDirectory + 'example.txt';
-    const content = await FileSystem.readAsStringAsync(fileUri);
-    console.log('File content:', content);
-  } catch (error) {
-    console.error('Error reading file:', error);
-  }
 }
 
 
