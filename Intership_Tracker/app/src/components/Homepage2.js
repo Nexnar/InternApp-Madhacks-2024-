@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { writeExampleDatabase, readFile } from '@/scripts/database';
+
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -14,6 +17,26 @@ import Task from './Task'; // Ensure this is the correct path
 export default function Homepage({ navigateToNewPage }) {
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
+
+  async function databaseHandler(){
+    await writeExampleDatabase()
+    let databaseOutput = await readFile() 
+    let apps = [];
+    //setDatabase(output.apps);
+    //console.log("printing the database " + databaseOutput.apps)
+
+    databaseOutput.apps.forEach((e) => {
+      console.log("for looping each title " + e.company)
+      apps.push(e.company);
+    })
+    //console.log(apps);
+    setTaskItems(apps)
+    //console.log("task items " + taskItems);
+  }
+
+  useEffect(() => {
+    databaseHandler();
+  }, [])
 
   // Handle adding a task to the list
   const handleAddTask = () => {
