@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { StyleSheet, Text, View, TextInput, Alert} from 'react-native';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -14,13 +14,14 @@ export default function NewAppPage() {
   const {id} = useLocalSearchParams();
 
   // general company information
-  const [company, changeCompany] = useState("...");
+  const [company, setCompany] = useState("...");
   const [jobLocation, setJobLocation] = useState("...");
   const [jobDescription, setJobDescription] = useState("...");
 
   // application data
   const [appStatus, setAppStatus] = useState("...");
   const [applicationDate, setApplicationDate] = useState("...");
+  const [interviewDate, setInterviewDate] = useState("...")
 
   // recruiter information
   const [recruiterName, setRecruiterName] = useState("...");
@@ -59,7 +60,7 @@ export default function NewAppPage() {
             <Text style = {[styles.text, styles.title]}>Job Information</Text>
             <SafeAreaView>
                 <Text style = {styles.text}>Enter Company Here</Text>
-                <TextInput style = {[styles.text, styles.enterField]}>{company}</TextInput>
+                <TextInput style = {[styles.text, styles.enterField]} value = {company} onChange={text => setCompany(text)}/>
             </SafeAreaView>
             <SafeAreaView>
                 <Text style = {styles.text}>Job Description</Text>
@@ -108,6 +109,9 @@ export default function NewAppPage() {
     </SafeAreaProvider>
   );
 }
+
+
+
 
 const styles = StyleSheet.create({
   div:{
