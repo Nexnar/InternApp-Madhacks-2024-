@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 
 const NewApplication = ({ navigateBack }) => {
@@ -6,6 +6,7 @@ const NewApplication = ({ navigateBack }) => {
   const [showDropdown, setShowDropdown] = useState(false); // State to control visibility of dropdown
   const [company, setCompany] = useState('');
   const [jobTitle, setJobTitle] = useState('');
+  const [userLink, setUserLink] = useState('');
 
   const statusData = [
     { label: 'PENDING', value: 'PENDING' },
@@ -24,6 +25,7 @@ const NewApplication = ({ navigateBack }) => {
     Alert.alert("Form Submitted", `Company: ${company}\nJob Title: ${jobTitle}\nStatus: ${status}`);
   };
 
+
   return (
     <View style={styles.container}>
       {/* Go Back Button at the top-left corner */}
@@ -41,11 +43,12 @@ const NewApplication = ({ navigateBack }) => {
         onChangeText={setCompany} // Track the company input
       />
       <TextInput 
-        secureTextEntry={true} 
+        secureTextEntry={false} 
         placeholder="Job Title" 
         style={styles.inputStyle} 
-        value={jobTitle}
+        defaultValue={jobTitle}
         onChangeText={setJobTitle} // Track the job title input
+        key={jobTitle}
       />
 
       {/* Dropdown Button */}
@@ -76,9 +79,73 @@ const NewApplication = ({ navigateBack }) => {
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
+
+      {/* Submit Link Button */}
+      <TextInput 
+        placeholder="  link" 
+        style={styles.inputStyle} 
+        value={userLink}
+        onChangeText={setUserLink} // Track the job title input
+      />
+      {/* Submit Link Button */}
+      <TouchableOpacity style={styles.submitButtonAlt} onPress={
+          () => {
+            console.log(userLink); 
+            RequestLinkData(userLink, setJobTitle, setCompany);
+            //setCompany(company);
+          }
+        }>
+        <Text style={styles.submitButtonText}>Autofill with Link</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+function RequestLinkData(link, setJobTitle, setCompany) {
+  console.log('Link provided: ' + link);
+
+  let jobBoard = '';
+
+  let jobTitle = '';
+  let company = '';
+  let status = '';
+
+  //check if url is from supported domain
+  if (link.startsWith("https://www.google.com/about/careers/applications/jobs/results/")) {
+    jobBoard = "Google";
+    company = "Google";
+  } else {
+    Alert.alert('Error', 'Job not detected. Please enter a link from a supported job board', [{text: 'OK'}]);
+    return;
+  }
+
+  let htmlResponse = '';
+  try {
+    fetch(link)
+      .then(response => response.text()) // get the response as text (HTML)
+      .then(html => {
+        //console.log(html); // log the HTML Data
+        console.log("logging html..");
+        htmlResponse = html;
+        const jobTitle = processHTML(htmlResponse, jobBoard)
+        console.log('Returning:', [jobTitle, company]);
+        setJobTitle(jobTitle);
+        setCompany(company);
+        return;
+      });
+  } catch (error) {
+    console.error("err: " + error);
+  }
+}
+
+function processHTML(srcHTML, jobBoard) {
+  if (jobBoard == "Google") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pJobTitle = (match && match[1].trim()) ?? '';
+    return pJobTitle
+  }
+}
 
 export default NewApplication;
 
@@ -155,8 +222,17 @@ const styles = StyleSheet.create({
     width: 300,
     alignItems: 'center',
   },
+  // Submit Button Styles
+  submitButtonAlt: {
+    marginTop: 30,
+    padding: 15,
+    backgroundColor: '#FF7777',
+    borderRadius: 10,
+    width: 300,
+    alignItems: 'center',
+  },
   submitButtonText: {
     fontSize: 18,
     color: 'white',
-  },
+  }
 });
