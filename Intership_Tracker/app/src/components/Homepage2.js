@@ -70,13 +70,16 @@ export default function Homepage({ navigateToNewPage }) {
 
       {/* Input and add task area */}
       <KeyboardAvoidingView behavior="padding" style={styles.writeTaskWrapper}>
-        {/* TEXT INPUT*/}
-        <TextInput
-          style={styles.input}
-          placeholder="Write a task"
-          value={task}
-          onChangeText={(text) => setTask(text)}
-        />
+        {
+          /* OLD TEXT CODE
+              <TextInput
+                style={styles.input}
+                placeholder="Write a task"
+                value={task}
+                onChangeText={(text) => setTask(text)}
+              />
+          */
+        }
         {/* TEXT INPUT*/}
         <TouchableOpacity onPress={navigateToNewPage}>
           <View style={styles.addWrapper}>
