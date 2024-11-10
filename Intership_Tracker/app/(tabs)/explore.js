@@ -67,8 +67,8 @@ export default function TabTwoScreen() {
         </Text>
       </SafeAreaView>
       <SafeAreaView style = {[styles.bodyDiv, styles.div]}>
-        <PieChart data = {chartData}/>
-        <Text>                           </Text>
+        <Text>                      </Text>
+        <TimeBarGraph Edata={[a, r, i, p, t]}/>
         <Text style={[styles.labelColor, styles.labelSize2]}>Total Applications Submitted: {t}</Text>
         <Text style={[styles.greenColor, styles.labelSize]}>Accepted: {a}</Text>
         <Text style={[styles.redColor, styles.labelSize]}>Rejected: {r}</Text>
@@ -76,7 +76,6 @@ export default function TabTwoScreen() {
         <Text style={[styles.grayColor, styles.labelSize]}>Pending: {p}</Text>
         <Text style={[styles.labelColor, styles.labelSize]}>Success Rate: {a / (a + r) * 100} %</Text>
         <Text>                           </Text>
-        <TimeBarGraph Edata={[a, r, i, p, t]}/>
       </SafeAreaView>
     </SafeAreaProvider>
   );
