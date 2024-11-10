@@ -1,6 +1,6 @@
 
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import { StyleSheet, Text, FlatList, TextInput, Alert, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput, Alert, TouchableOpacity, Keyboard} from 'react-native';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -34,10 +34,14 @@ export default function TabTwoScreen() {
    async function databaseHandler(){
     let databaseOutput = await readFile() 
 
+    let applicationList = application.split(" , ");
+    console.log(applicationList);
+    
+
 
     for(let i = 0; i < databaseOutput.apps.length; i++){
       const e = databaseOutput.apps[i];
-      if( e.company === application){
+      if( e.company === applicationList[0] && e.Job_title === applicationList[1] && e.status === applicationList[2]){
         setNewCompany(e.company)
         setNewExtraNotes(e.extraNotes)
         setNewJobTitle(e.Job_title)
@@ -72,6 +76,8 @@ export default function TabTwoScreen() {
   useEffect(() => {
     navigation.setOptions({
       title: `Application For "${application}"`, // Set or update the title here
+      headerTintColor: "white",
+      headerStyle: { backgroundColor: "black"}
       
     });
   }, [navigation]);
@@ -90,73 +96,78 @@ export default function TabTwoScreen() {
 
   return (
     <SafeAreaProvider style = {styles.mainDiv}>
-      {/* TITLE CARD */}
-      <Text style = {[styles.text, styles.title]}>Application Information</Text>
-      
-      {/* COMPANY */}
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {styles.text}>Company Name"</Text>
-        <TextInput 
-        placeholder="Company" 
-        style={styles.smallInputStyle} 
-        value= {newCompany}
-        multiline = {false}
-        onChangeText={setNewCompany}
-        />
-      </SafeAreaView>
+      <SafeAreaView style = {styles.innerDiv}>
+        {/* TITLE CARD */}
+        <Text style = {[styles.text, styles.title]}>Edit Application Information</Text>
+        
+        {/* COMPANY */}
+        <SafeAreaView style = {[styles.div]}>
+          <Text style = {styles.text}>Company Name"</Text>
+          <TextInput 
+          placeholder="Company" 
+          style={styles.smallInputStyle} 
+          value= {newCompany}
+          multiline = {false}
+          onChangeText={setNewCompany}
+          />
+        </SafeAreaView>
 
-      {/* Status */}
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {styles.text}>Application Status</Text>
-        <TouchableOpacity
-        style={styles.dropdownButton}
-        onPress={() => setDropDownVis(!dropDownVis)} // Toggle dropdown visibility
-      >
-        <Text style={styles.dropdownButtonText}>Status: {newStatus}</Text>
-      </TouchableOpacity>
-        {
-          dropDownVis && (
-            <FlatList
-          data={statusData}
-          keyExtractor={(item) => item.value}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.dropdownItem}
-              onPress={() => setNewStatus(item.value)}
-            >
-              <Text style={styles.dropdownItemText}>{item.label}</Text>
-            </TouchableOpacity>
-          )}
-        />
-          )
-        }
-      </SafeAreaView>
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {styles.text}>Job Title</Text>
-        <TextInput 
-        placeholder="job title" 
-        style={styles.smallInputStyle} 
-        value= {newJobTitle}
-        multiline = {false}
-        onChangeText={newJobTitle}
-        />
-      </SafeAreaView>
-      <SafeAreaView style = {[styles.div]}>
-        <Text style = {styles.text}>Extra Notes:</Text>
-        <TextInput 
-        placeholder="extraNotes" 
-        style={styles.inputStyle} 
-        value= {newExtraNotes}
-        multiline = {true}
-        numberOfLines={5}
-        onChangeText={setNewExtraNotes}
-        />
-      </SafeAreaView>
-
-      <SafeAreaView style = {[styles.div]}>
-        <TouchableOpacity style={styles.submitButton} onPress={writeData}>
-          <Text style={styles.submitButtonText}>Save Changes</Text>
+        {/* Status */}
+        <SafeAreaView style = {[styles.div]}>
+          <Text style = {styles.text}>Application Status</Text>
+          <TouchableOpacity
+          style={styles.dropdownButton}
+          onPress={() => setDropDownVis(!dropDownVis)} // Toggle dropdown visibility
+        >
+          <Text style={styles.dropdownButtonText}>Status: {newStatus}</Text>
         </TouchableOpacity>
+          {
+            dropDownVis && (
+              <FlatList
+            data={statusData}
+            keyExtractor={(item) => item.value}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.dropdownItem}
+                onPress={() => {
+                  setNewStatus(item.value)
+                  setDropDownVis(false);
+                }}
+              >
+                <Text style={styles.dropdownItemText}>{item.label}</Text>
+              </TouchableOpacity>
+            )}
+          />
+            )
+          }
+        </SafeAreaView>
+        <SafeAreaView style = {[styles.div]}>
+          <Text style = {styles.text}>Job Title</Text>
+          <TextInput 
+          placeholder="job title" 
+          style={styles.smallInputStyle} 
+          value= {newJobTitle}
+          multiline = {false}
+          onChangeText={setNewJobTitle}
+          />
+        </SafeAreaView>
+        <SafeAreaView style = {[styles.div]}>
+          <Text style = {styles.text}>Extra Notes:</Text>
+          <TextInput 
+          placeholder="extraNotes" 
+          style={styles.inputStyle} 
+          value= {newExtraNotes}
+          multiline = {true}
+          numberOfLines={5}
+          onChangeText={setNewExtraNotes}
+          />
+        </SafeAreaView>
+
+        <SafeAreaView style = {[styles.div]}>
+          <TouchableOpacity style={styles.submitButton} onPress={writeData}>
+            <Text style={styles.submitButtonText}>Save Changes</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -164,28 +175,55 @@ export default function TabTwoScreen() {
 
 const styles = StyleSheet.create({
   div:{
-    textAlign: "left",
-    alignContent: "flex-start",
-    alignItems: "flex-start",
+    textAlign: "center",
     padding: 10,
-    
+    marginLeft: "auto",
+    marginRight: "auto"
+  },
+  innerDiv:{
+    backgroundColor:"black",
+    margin: 20,
+    padding: 10,
+    width: 350,
+    borderRadius: 25,
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "center"
   },
   mainDiv:{
-    
+    width: "100%",
+    textAlign: "center",
+    justifyContent: "center",
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: "flex",
+    textAlign: "center",
+    backgroundColor:"black"
   },
   titleDiv:{
-    flex: 1,
-    backgroundColor:"purple",
-    color: "white"
+    textAlign: "center",
+    width: "100%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    justifyContent: "center",
+    display: "flex"
   },
-  bodyDiv:{
-    flex: 11
+  body:{
+    backgroundColor:"black"
   },
   text:{
     color: "white"
   },
   title:{
-    fontSize: 30
+    fontSize: 30,
+    textAlign: "center",
+    width: "100%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    justifyContent: "center",
+    display: "flex"
   },
   inputStyle: {
     marginTop: 5,

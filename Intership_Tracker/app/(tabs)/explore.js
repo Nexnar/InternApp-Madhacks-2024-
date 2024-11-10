@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   },
   titleDiv:{
     flex: 1,
-    backgroundColor:"purple",
+    backgroundColor:"gray",
     color: "white"
   },
   bodyDiv:{
