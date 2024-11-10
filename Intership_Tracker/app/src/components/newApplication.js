@@ -28,7 +28,11 @@ const NewApplication = ({ navigateBack }) => {
   const handleSubmit = () => {
     // Here you can later incorporate the data with your backend or state
     //Alert.alert("Form Submitted", `Company: ${company}\nJob Title: ${jobTitle}\nStatus: ${status}`);
-    handleWritingData();
+    if (jobTitle === '' || company === '' || status === '') {
+      Alert.alert('Error', 'Please fill out all fields', [{text: 'OK'}]);
+    } else {
+      handleWritingData();
+    }
   };
 
 
