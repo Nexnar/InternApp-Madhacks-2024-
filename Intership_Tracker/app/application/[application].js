@@ -174,8 +174,30 @@ const styles = StyleSheet.create({
     padding: 10,
     
   },
+  innerDiv:{
+    backgroundColor:"black",
+    margin: 15,
+    borderRadius: 25,
+    flexDirection: "row"
+  },
   mainDiv:{
-    
+    width: "100%",
+    textAlign: "center"
+  },
+  circle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 10,
+    borderBlockColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: 5
+  },
+  circleTxt: {
+    fontSize: 45,
+    color: "white"
   },
   titleDiv:{
     flex: 1,

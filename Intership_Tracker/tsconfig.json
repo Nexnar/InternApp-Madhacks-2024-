@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/Homepage.js", "app/application/[application].js", "app/(tabs)/index.js", "app/(tabs)/_layout.js"  ]
+, "app/Homepage.js", "app/application/[application].js", "app/(tabs)/index.jsx", "app/(tabs)/_layout.js"  ]
 }

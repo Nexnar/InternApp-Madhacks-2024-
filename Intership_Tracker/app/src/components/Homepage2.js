@@ -19,11 +19,14 @@ export default function Homepage({ navigateToNewPage }) {
   const router = useRouter();
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
+  const [updatePage, setUpdatePage] = useState(1);
 
   // IMPORT DATA FROM Database
   async function databaseHandler(){
+    setUpdatePage(10);
     //await writeExampleDatabase()
     let databaseOutput = await readFile()
+    
 
     let apps = [];
 

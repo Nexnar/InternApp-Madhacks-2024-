@@ -1,14 +1,38 @@
-import React from 'react';
+import { readFile, saveListToDatabase } from '@/scripts/database';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const Task = (props) => {
+  const router = useRouter();
+  const [isVisible, setIsVisible] = useState(true)
+
+  async function handlePress(){
+    const databaseData = await readFile();
+    setIsVisible(false);
+    const propsList = props.text.split(" , ");
+    console.log(propsList)
+    
+    for(let i = 0; i < databaseData.apps.length; i++){
+      const e = databaseData.apps[i];
+      if(e.company === propsList[0] && e.Job_title === propsList[1] && e.status === propsList[2]){
+        const outList = [...databaseData.apps.splice(0, i), ...databaseData.apps.splice(i+1)];
+        await saveListToDatabase(outList);
+      }
+    }
+
+    router.navigate("/(tabs)")
+  }
+
   return (
-    <View style={styles.item}>
+    isVisible && <View style={styles.item}>
       <View style={styles.itemLeft}>
         <View style={styles.square}></View>
         <Text style={styles.itemText}>{props.text}</Text>
       </View>
-      <View style={styles.circular}></View>
+      <TouchableOpacity onPress={handlePress}>
+        <View style={styles.circular} ></View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -40,11 +64,11 @@ const styles = StyleSheet.create({
     maxWidth: '90%',
   },
   circular: {
-    width: 12,
-    height: 12,
+    width: 20,
+    height: 20,
     borderColor: 'red',
     borderWidth: 2,
-    borderRadius: 5,
+    borderRadius: 10,
   },
 });
 
