@@ -13,18 +13,16 @@ export default function TabTwoScreen() {
   console.log(useLocalSearchParams())
   const {application} = useLocalSearchParams();
   const [applicationData, setApplicationData] = useState("");
-  let dataFound = false;
+
 
    // IMPORT DATA FROM Database
    async function databaseHandler(){
     let databaseOutput = await readFile() 
   
-
     databaseOutput.apps.forEach((e) => {
       console.log("for looping each title " + e.company)
       if(e.company === application){
         setApplicationData(e);
-        datafound = true;
         return;
       }
     })
@@ -47,12 +45,6 @@ export default function TabTwoScreen() {
   // sets on exit and on enter hooks
   useFocusEffect(
     React.useCallback(() => {
-      // Code to run when the screen is focused
-      Alert.alert(
-        "Loading Data!", // Title of the alert
-        "This is an alert message", // Message
-      );
-
       return () => {
         // Cleanup code when the screen loses focus
         Alert.alert(
