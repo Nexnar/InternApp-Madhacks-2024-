@@ -12,6 +12,8 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import HomePage from "../Homepage";
 import { writeExampleDatabase, readFile } from "@/scripts/database";
 import { useFocusEffect } from '@react-navigation/native';
+import * as Permissions from 'expo-permissions';
+import * as FileSystem from 'expo-file-system';
 
 
 export default function HomeScreen() {

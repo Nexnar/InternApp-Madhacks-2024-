@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { writeExampleDatabase, readFile } from '@/scripts/database';
+import { writeExampleDatabase, readFile, createDatabase } from '@/scripts/database';
 
 import {
   KeyboardAvoidingView,
@@ -22,9 +22,14 @@ export default function Homepage({ navigateToNewPage }) {
 
   // IMPORT DATA FROM Database
   async function databaseHandler(){
-    //await writeExampleDatabase()
-    let databaseOutput = await readFile() 
+
+    let databaseOutput = await readFile();
     let apps = [];
+
+    if(databaseOutput == null){
+      createDatabase();
+      databaseOutput = await readFile();
+    }
 
 
     databaseOutput.apps.forEach((e) => {
@@ -118,7 +123,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    fontFamily: 'Verdana',
   },
   items: {
     marginTop: 20,
