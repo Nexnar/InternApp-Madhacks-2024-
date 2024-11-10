@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
-=======
 import { applicationFactory, writeToDatabase } from '@/scripts/database';
-import React, { useState } from 'react';
->>>>>>> ff77d60b0a1cfe9cc9d0353b2d6997d167a60377
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 
 const NewApplication = ({ navigateBack }) => {
@@ -56,9 +52,8 @@ const NewApplication = ({ navigateBack }) => {
         secureTextEntry={false} 
         placeholder="Job Title" 
         style={styles.inputStyle} 
-        defaultValue={jobTitle}
+        value={jobTitle}
         onChangeText={setJobTitle} // Track the job title input
-        key={jobTitle}
       />
 
       {/* Dropdown Button */}
@@ -102,7 +97,7 @@ const NewApplication = ({ navigateBack }) => {
           () => {
             console.log(userLink); 
             RequestLinkData(userLink, setJobTitle, setCompany);
-            //setCompany(company);
+            setUserLink('');
           }
         }>
         <Text style={styles.submitButtonText}>Autofill with Link</Text>
@@ -112,6 +107,9 @@ const NewApplication = ({ navigateBack }) => {
 };
 
 function RequestLinkData(link, setJobTitle, setCompany) {
+  //supported careers websites:
+  // https://www.google.com/about/careers/applications/jobs/results/
+  // https://www.simplyhired.com/job/
   console.log('Link provided: ' + link);
 
   let jobBoard = '';
@@ -124,6 +122,12 @@ function RequestLinkData(link, setJobTitle, setCompany) {
   if (link.startsWith("https://www.google.com/about/careers/applications/jobs/results/")) {
     jobBoard = "Google";
     company = "Google";
+  } else if (link.startsWith("https://www.simplyhired.com/job/")) {
+    jobBoard = "SimplyHired";
+    company = "n/a"; //fix later when web crawling isnt so daunting
+  } else if (link.startsWith("https://www.simplyhired.com/search?")) {
+    Alert.alert('Error', 'Search page not supported, please submit a direct listing link from SimplyHired', [{text: 'OK'}]);
+    return;
   } else {
     Alert.alert('Error', 'Job not detected. Please enter a link from a supported job board', [{text: 'OK'}]);
     return;
@@ -135,12 +139,13 @@ function RequestLinkData(link, setJobTitle, setCompany) {
       .then(response => response.text()) // get the response as text (HTML)
       .then(html => {
         //console.log(html); // log the HTML Data
-        console.log("logging html..");
         htmlResponse = html;
-        const jobTitle = processHTML(htmlResponse, jobBoard)
+        const jobTitle = processHTMLtitle(htmlResponse, jobBoard)
+        const company = processHTMLcompany(htmlResponse, jobBoard)
         console.log('Returning:', [jobTitle, company]);
         setJobTitle(jobTitle);
         setCompany(company);
+
         return;
       });
   } catch (error) {
@@ -148,12 +153,38 @@ function RequestLinkData(link, setJobTitle, setCompany) {
   }
 }
 
-function processHTML(srcHTML, jobBoard) {
+function processHTMLtitle(srcHTML, jobBoard) {
   if (jobBoard == "Google") {
     const titleRegex = /<title>(.*?)<\/title>/;
     const match = srcHTML.match(titleRegex);
     const pJobTitle = (match && match[1].trim()) ?? '';
     return pJobTitle
+  } else if (jobBoard == "SimplyHired") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pJobTitle = (match && match[1].trim()) ?? '';
+    const dashCharIndex = pJobTitle.lastIndexOf('-');
+    if (dashCharIndex === -1) {
+      return '';
+    }
+    return pJobTitle.substring(0, dashCharIndex).trim();
+  }
+}
+
+function processHTMLcompany(srcHTML, jobBoard) {
+  if (jobBoard == "Google") {
+    return "Google";
+  } else if (jobBoard == "SimplyHired") {
+    const titleRegex = /<title>(.*?)<\/title>/;
+    const match = srcHTML.match(titleRegex);
+    const pCompany = (match && match[1].trim()) ?? '';
+    const dashCharIndex = pCompany.lastIndexOf('-');
+    const barCharIndex = pCompany.lastIndexOf('|');
+    if (dashCharIndex === -1 || barCharIndex === -1) {
+      return '';
+    }
+    const title = pCompany.substring(dashCharIndex + 1, barCharIndex).trim();
+    return title;
   }
 }
 
