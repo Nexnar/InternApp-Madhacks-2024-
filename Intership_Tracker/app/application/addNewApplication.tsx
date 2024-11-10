@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TextInput, Alert} from 'react-native';
 import React, { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
+import * as FileSystem from "expo-file-system";
 
 
 
@@ -43,10 +44,7 @@ export default function NewAppPage() {
 
       return () => {
         // Cleanup code when the screen loses focus
-        Alert.alert(
-          "Saving Data!", // Title of the alert
-          `company : ${company} \napplication date : ${applicationDate}\napplication status : ${appStatus}`, // Message
-        );
+        writeFile();
       };
     }, [])
   );
@@ -108,6 +106,41 @@ export default function NewAppPage() {
 
     </SafeAreaProvider>
   );
+}
+
+async function writeFile() {
+  const fileUri = FileSystem.documentDirectory + 'database.json';
+  const content = 'Hello, this is a sample text file.';
+
+  try {
+    await FileSystem.writeAsStringAsync(fileUri, content);
+    console.log('File written successfully!');
+  } catch (error) {
+    console.error('Error writing file:', error);
+  }
+
+}
+
+async function checkFilesSystem(){
+  try {
+    const directoryUri = FileSystem.documentDirectory;
+    const fileList = await FileSystem.readDirectoryAsync(directoryUri);
+    console.log('Files:', fileList);
+    return fileList.indexOf("database.json");
+  } catch (error) {
+    console.error('Error reading directory:', error);
+    return false;
+  }
+}
+
+async function readFile(){
+  try {
+    const fileUri = FileSystem.documentDirectory + 'example.txt';
+    const content = await FileSystem.readAsStringAsync(fileUri);
+    console.log('File content:', content);
+  } catch (error) {
+    console.error('Error reading file:', error);
+  }
 }
 
 
