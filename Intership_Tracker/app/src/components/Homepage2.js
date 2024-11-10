@@ -118,7 +118,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    fontFamily: 'Verdana',
   },
   items: {
     marginTop: 20,

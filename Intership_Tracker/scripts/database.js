@@ -1,5 +1,8 @@
 import * as FileSystem from "expo-file-system";
 
+let counter = 0;
+
+
 
 export async function createDatabase() {
     const fileUri = FileSystem.documentDirectory + 'database.json';
@@ -25,6 +28,16 @@ export async function checkFilesSystem(){
     }
     return false;
   }
+
+export async function setUpDatabase(){
+  try{
+    const fileUri = FileSystem.documentDirectory + 'database.json';
+    const fileData = await FileSystem.readAsStringAsync(fileUri);
+    const jsonData = JSON.parse(fileData);
+  } catch (error){
+    console.error('Error reading file:', error);
+  }
+}
   
 export async function readFile(){
     try {
