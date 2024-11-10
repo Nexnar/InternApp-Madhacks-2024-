@@ -129,7 +129,10 @@ export default function TabTwoScreen() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.dropdownItem}
-                onPress={() => setNewStatus(item.value)}
+                onPress={() => {
+                  setNewStatus(item.value)
+                  setDropDownVis(false);
+                }}
               >
                 <Text style={styles.dropdownItemText}>{item.label}</Text>
               </TouchableOpacity>
@@ -161,11 +164,7 @@ export default function TabTwoScreen() {
         </SafeAreaView>
 
         <SafeAreaView style = {[styles.div]}>
-          <TouchableOpacity style={styles.submitButton} onPress={() => {
-            writeData;
-            Keyboard.dismiss();
-          }
-          }>
+          <TouchableOpacity style={styles.submitButton} onPress={writeData}>
             <Text style={styles.submitButtonText}>Save Changes</Text>
           </TouchableOpacity>
         </SafeAreaView>
