@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { writeExampleDatabase, readFile } from '@/scripts/database';
+import { writeExampleDatabase, readFile, createDatabase, setUpDatabase } from '@/scripts/database';
 
 import {
   KeyboardAvoidingView,
@@ -23,13 +23,14 @@ export default function Homepage({ navigateToNewPage }) {
   // IMPORT DATA FROM Database
   async function databaseHandler(){
     //await writeExampleDatabase()
-    let databaseOutput = await readFile() 
+    let databaseOutput = await readFile()
+
     let apps = [];
 
 
     databaseOutput.apps.forEach((e) => {
       //console.log("for looping each title " + e.company)
-      apps.push(e.company);
+      apps.push(`${e.company} , ${e.Job_title} , ${e.status}`);
     })
 
     setTaskItems(apps)

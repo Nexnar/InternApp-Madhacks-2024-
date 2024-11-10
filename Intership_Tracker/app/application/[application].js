@@ -34,10 +34,14 @@ export default function TabTwoScreen() {
    async function databaseHandler(){
     let databaseOutput = await readFile() 
 
+    let applicationList = application.split(" , ");
+    console.log(applicationList);
+    
+
 
     for(let i = 0; i < databaseOutput.apps.length; i++){
       const e = databaseOutput.apps[i];
-      if( e.company === application){
+      if( e.company === applicationList[0] && e.Job_title === applicationList[1] && e.status === applicationList[2]){
         setNewCompany(e.company)
         setNewExtraNotes(e.extraNotes)
         setNewJobTitle(e.Job_title)
