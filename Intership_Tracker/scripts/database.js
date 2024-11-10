@@ -53,6 +53,16 @@ export async function writeToDatabase(input){
         return null;
       }
 }
+export async function saveListToDatabase(list){
+  try {
+    const fileUri = FileSystem.documentDirectory + 'database.json';
+    console.log('File content:', {"apps" : list});
+    await FileSystem.writeAsStringAsync(fileUri, JSON.stringify({"apps" : list}));
+  } catch (error) {
+    console.error('Error reading file:', error);
+    return null;
+  }
+}
 
 export async function writeExampleDatabase(){
 

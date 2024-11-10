@@ -13,7 +13,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Task from './Task'; // Ensure this is the correct path
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 export default function Homepage({ navigateToNewPage }) {
   const router = useRouter();
@@ -35,9 +35,14 @@ export default function Homepage({ navigateToNewPage }) {
     setTaskItems(apps)
   }
   // use effect to only run once
-  useEffect(() => {
-    databaseHandler();
-  }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+      databaseHandler();
+        return () => {
+        };
+      }, [])
+    );
 
   // Handle adding a task to the list
   const handleAddTask = () => {
