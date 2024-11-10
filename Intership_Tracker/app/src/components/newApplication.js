@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',  // Center the text inside the button
   },
   goBackText: {
-    fontSize: 24,
+    fontSize: 18,
     color: '#fff',
   },
   // Submit Button Styles
