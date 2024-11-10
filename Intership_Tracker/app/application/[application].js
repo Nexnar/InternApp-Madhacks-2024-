@@ -1,21 +1,15 @@
-
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import { StyleSheet, Text, FlatList, TextInput, Alert, TouchableOpacity, Keyboard} from 'react-native';
-import React from 'react';
-import { useEffect, useState } from 'react';
+import { StyleSheet, Text, FlatList, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { readFile, saveListToDatabase } from '@/scripts/database';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-
 export default function TabTwoScreen() {
-  // get page param -> name the page
   const router = useRouter();
-  console.log(useLocalSearchParams())
-  const {application} = useLocalSearchParams();
-  //const [applicationData, setApplicationData] = useState("test");
+  const { application } = useLocalSearchParams();
 
-  const [index, setIndex] = useState("-1")
+  const [index, setIndex] = useState("-1");
   const [newCompany, setNewCompany] = useState("");
   const [newJobTitle, setNewJobTitle] = useState("");
   const [newStatus, setNewStatus] = useState("");
@@ -26,50 +20,40 @@ export default function TabTwoScreen() {
     { label: 'PENDING', value: 'PENDING' },
     { label: 'ACCEPTED', value: 'ACCEPTED' },
     { label: 'REJECTED', value: 'REJECTED' },
-    { label: 'INTERVIEW', value: 'INTERVIEW'},
+    { label: 'INTERVIEW', value: 'INTERVIEW' },
   ];
 
-
-   // IMPORT DATA FROM Database
-   async function databaseHandler(){
-    let databaseOutput = await readFile() 
-
+  // IMPORT DATA FROM Database
+  async function databaseHandler() {
+    let databaseOutput = await readFile();
     let applicationList = application.split(" , ");
-    console.log(applicationList);
-    
-
-
-    for(let i = 0; i < databaseOutput.apps.length; i++){
+   
+    for (let i = 0; i < databaseOutput.apps.length; i++) {
       const e = databaseOutput.apps[i];
-      if( e.company === applicationList[0] && e.Job_title === applicationList[1] && e.status === applicationList[2]){
-        setNewCompany(e.company)
-        setNewExtraNotes(e.extraNotes)
-        setNewJobTitle(e.Job_title)
-        setNewStatus(e.status)
-        setIndex(i)
+      if (e.company === applicationList[0] && e.Job_title === applicationList[1] && e.status === applicationList[2]) {
+        setNewCompany(e.company);
+        setNewExtraNotes(e.extraNotes);
+        setNewJobTitle(e.Job_title);
+        setNewStatus(e.status);
+        setIndex(i);
       }
     }
-
   }
 
-  async function writeData(event){
-    //event.persist()
-    try{
-      let databaseOutput = await readFile() 
+  async function writeData(event) {
+    try {
+      let databaseOutput = await readFile();
       const newData = databaseOutput.apps[index];
       newData.company = newCompany;
       newData.Job_title = newJobTitle;
       newData.status = newStatus;
       newData.extraNotes = newExtraNotes;
       await saveListToDatabase(databaseOutput.apps);
-      router.navigate("./" + newCompany)
-    } catch (error){
+      router.navigate("./" + newCompany);
+    } catch (error) {
       console.error('Error reading file:', error);
     }
   }
-
-
-  // 
 
   // set the title of the page
   const navigation = useNavigation();
@@ -77,207 +61,197 @@ export default function TabTwoScreen() {
     navigation.setOptions({
       title: `Application For "${application}"`, // Set or update the title here
       headerTintColor: "white",
-      headerStyle: { backgroundColor: "black"}
-      
+      headerStyle: { backgroundColor: "black" },
     });
   }, [navigation]);
 
   // sets on exit and on enter hooks
   useFocusEffect(
-  React.useCallback(() => {
-    databaseHandler();
-      return () => {
-      };
+    React.useCallback(() => {
+      databaseHandler();
+      return () => {};
     }, [])
   );
-   
-
-  
 
   return (
-    <SafeAreaProvider style = {styles.mainDiv}>
-      <SafeAreaView style = {styles.innerDiv}>
-        {/* TITLE CARD */}
-        <Text style = {[styles.text, styles.title]}>Edit Application Information</Text>
-        
-        {/* COMPANY */}
-        <SafeAreaView style = {[styles.div]}>
-          <Text style = {styles.text}>Company Name"</Text>
-          <TextInput 
-          placeholder="Company" 
-          style={styles.smallInputStyle} 
-          value= {newCompany}
-          multiline = {false}
-          onChangeText={setNewCompany}
-          />
-        </SafeAreaView>
+    <SafeAreaProvider style={styles.mainDiv}>
+      <KeyboardAvoidingView
+        style={styles.mainDiv}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjust for iOS and Android
+      >
+        <SafeAreaView style={styles.innerDiv}>
+          {/* TITLE CARD */}
+          <Text style={[styles.text, styles.title]}>Edit Application Information</Text>
 
-        {/* Status */}
-        <SafeAreaView style = {[styles.div]}>
-          <Text style = {styles.text}>Application Status</Text>
-          <TouchableOpacity
-          style={styles.dropdownButton}
-          onPress={() => setDropDownVis(!dropDownVis)} // Toggle dropdown visibility
-        >
-          <Text style={styles.dropdownButtonText}>Status: {newStatus}</Text>
-        </TouchableOpacity>
-          {
-            dropDownVis && (
+          {/* COMPANY */}
+          <SafeAreaView style={styles.inputContainer}>
+            <Text style={styles.text}>Company Name</Text>
+            <TextInput
+              placeholder="Enter Company"
+              style={styles.inputStyle}
+              value={newCompany}
+              onChangeText={setNewCompany}
+              placeholderTextColor="#D3D3D3" // Light gray placeholder
+            />
+          </SafeAreaView>
+
+          {/* Status */}
+          <SafeAreaView style={styles.inputContainer}>
+            <Text style={styles.text}>Application Status</Text>
+            <TouchableOpacity
+              style={styles.dropdownButton}
+              onPress={() => setDropDownVis(!dropDownVis)} // Toggle dropdown visibility
+            >
+              <Text style={styles.dropdownButtonText}>Status: {newStatus || 'Select Status'}</Text>
+            </TouchableOpacity>
+            {dropDownVis && (
               <FlatList
-            data={statusData}
-            keyExtractor={(item) => item.value}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.dropdownItem}
-                onPress={() => {
-                  setNewStatus(item.value)
-                  setDropDownVis(false);
-                }}
-              >
-                <Text style={styles.dropdownItemText}>{item.label}</Text>
-              </TouchableOpacity>
+                data={statusData}
+                keyExtractor={(item) => item.value}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      setNewStatus(item.value);
+                      setDropDownVis(false);
+                    }}
+                  >
+                    <Text style={styles.dropdownItemText}>{item.label}</Text>
+                  </TouchableOpacity>
+                )}
+              />
             )}
-          />
-            )
-          }
-        </SafeAreaView>
-        <SafeAreaView style = {[styles.div]}>
-          <Text style = {styles.text}>Job Title</Text>
-          <TextInput 
-          placeholder="job title" 
-          style={styles.smallInputStyle} 
-          value= {newJobTitle}
-          multiline = {false}
-          onChangeText={setNewJobTitle}
-          />
-        </SafeAreaView>
-        <SafeAreaView style = {[styles.div]}>
-          <Text style = {styles.text}>Extra Notes:</Text>
-          <TextInput 
-          placeholder="extraNotes" 
-          style={styles.inputStyle} 
-          value= {newExtraNotes}
-          multiline = {true}
-          numberOfLines={5}
-          onChangeText={setNewExtraNotes}
-          />
-        </SafeAreaView>
+          </SafeAreaView>
 
-        <SafeAreaView style = {[styles.div]}>
-          <TouchableOpacity style={styles.submitButton} onPress={writeData}>
-            <Text style={styles.submitButtonText}>Save Changes</Text>
-          </TouchableOpacity>
+          {/* Job Title */}
+          <SafeAreaView style={styles.inputContainer}>
+            <Text style={styles.text}>Job Title</Text>
+            <TextInput
+              placeholder="Enter Job Title"
+              style={styles.inputStyle}
+              value={newJobTitle}
+              onChangeText={setNewJobTitle}
+              placeholderTextColor="#D3D3D3" // Light gray placeholder
+            />
+          </SafeAreaView>
+
+          {/* Extra Notes */}
+          <SafeAreaView style={styles.inputContainer}>
+            <Text style={styles.text}>Extra Notes</Text>
+            {/* Using ScrollView for the TextInput to allow for scrolling when text is long */}
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.textAreaContainer}>
+              <TextInput
+                placeholder="Enter Extra Notes"
+                style={styles.textAreaStyle}
+                value={newExtraNotes}
+                multiline={true}
+                onChangeText={setNewExtraNotes}
+                placeholderTextColor="#D3D3D3" // Light gray placeholder
+              />
+            </ScrollView>
+          </SafeAreaView>
+
+          {/* Save Button */}
+          <SafeAreaView style={styles.submitContainer}>
+            <TouchableOpacity style={styles.submitButton} onPress={writeData}>
+              <Text style={styles.submitButtonText}>Save Changes</Text>
+            </TouchableOpacity>
+          </SafeAreaView>
         </SafeAreaView>
-      </SafeAreaView>
+      </KeyboardAvoidingView>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  div:{
-    textAlign: "center",
-    padding: 10,
-    marginLeft: "auto",
-    marginRight: "auto"
+  mainDiv: {
+    width: '100%',
+    justifyContent: 'center',
+    backgroundColor: '#121212',
+    flex: 1,
   },
-  innerDiv:{
-    backgroundColor:"black",
+  innerDiv: {
+    backgroundColor: '#1e1e1e',
     margin: 20,
-    padding: 10,
+    padding: 20,
     width: 350,
-    borderRadius: 25,
-    marginLeft: "auto",
-    marginRight: "auto",
-    display: "flex",
-    justifyContent: "center",
-    textAlign: "center"
+    borderRadius: 15,
+    alignSelf: 'center',
   },
-  mainDiv:{
-    width: "100%",
-    textAlign: "center",
-    justifyContent: "center",
-    marginLeft: "auto",
-    marginRight: "auto",
-    display: "flex",
-    textAlign: "center",
-    backgroundColor:"black"
+  title: {
+    fontSize: 26,
+    textAlign: 'center',
+    color: 'white',
+    marginBottom: 20,
   },
-  titleDiv:{
-    textAlign: "center",
-    width: "100%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    justifyContent: "center",
-    display: "flex"
+  text: {
+    color: 'white',
+    fontSize: 16,
+    marginBottom: 5,
   },
-  body:{
-    backgroundColor:"black"
-  },
-  text:{
-    color: "white"
-  },
-  title:{
-    fontSize: 30,
-    textAlign: "center",
-    width: "100%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    justifyContent: "center",
-    display: "flex"
+  inputContainer: {
+    marginBottom: 15,
   },
   inputStyle: {
-    marginTop: 5,
-    width: 300,
-    height: 100,
-    paddingHorizontal: 10,
-    borderRadius: 2,
-    backgroundColor: 'white',
-    textAlignVertical:"top"
+    width: '100%',
+    height: 45,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: '#333',
+    color: 'white',
+    fontSize: 16,
   },
-  smallInputStyle: {
-    marginTop: 5,
-    width: 300,
-    height: 30,
-    paddingHorizontal: 10,
-    borderRadius: 2,
-    backgroundColor: 'white',
-    textAlignVertical:"center"
+  textAreaContainer: {
+    paddingBottom: 20, // Adjust this padding to ensure the last part is visible
+  },
+  textAreaStyle: {
+    width: '100%',
+    minHeight: 100,
+    maxHeight: 150,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: '#333',
+    color: 'white',
+    fontSize: 16,
+    textAlignVertical: 'top',
+  },
+  dropdownButton: {
+    marginTop: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    backgroundColor: '#444',
+    borderRadius: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  dropdownButtonText: {
+    fontSize: 16,
+    color: 'white',
+  },
+  dropdownItem: {
+    padding: 15,
+    backgroundColor: '#444',
+    borderBottomWidth: 1,
+    borderColor: '#333',
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    color: 'white',
+  },
+  submitContainer: {
+    marginTop: 20,
+    alignItems: 'center',
   },
   submitButton: {
-    marginTop: 30,
-    padding: 15,
-    backgroundColor: 'red',
-    borderRadius: 10,
-    width: 300,
+    paddingVertical: 15,
+    paddingHorizontal: 35,
+    backgroundColor: '#ff6347',
+    borderRadius: 25,
+    width: '80%',
     alignItems: 'center',
   },
   submitButtonText: {
     fontSize: 18,
     color: 'white',
-  },
-
-  dropdownButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: 'gray',
-    borderRadius: 10,
-    width: 300,
-    alignItems: 'center',
-  },
-  dropdownButtonText: {
-    fontSize: 18,
-    color: 'white',
-  },
-  // Dropdown item style
-  dropdownItem: {
-    padding: 15,
-    backgroundColor: '#f0f0f0',
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-    width: 300,
-  },
-  dropdownItemText: {
-    fontSize: 18,
-    color: '#356859',
   },
 });
