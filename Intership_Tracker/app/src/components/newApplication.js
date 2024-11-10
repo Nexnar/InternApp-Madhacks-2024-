@@ -20,21 +20,19 @@ const NewApplication = ({ navigateBack }) => {
     setStatus(value);      
     setShowDropdown(false);  // Close dropdown after selection
   };
+
   async function handleWritingData(){
     await writeToDatabase(applicationFactory(company, jobTitle, status));
     navigateBack();
   }
 
   const handleSubmit = () => {
-    // Here you can later incorporate the data with your backend or state
-    //Alert.alert("Form Submitted", `Company: ${company}\nJob Title: ${jobTitle}\nStatus: ${status}`);
     if (jobTitle === '' || company === '' || status === '') {
       Alert.alert('Error', 'Please fill out all fields', [{text: 'OK'}]);
     } else {
       handleWritingData();
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -43,14 +41,15 @@ const NewApplication = ({ navigateBack }) => {
         <Text style={styles.goBackText}>{'X'}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.formLabel}>New Application</Text>
+      <Text style={styles.formLabel}>NEW APPLICATION</Text>
 
       {/* Form Inputs */}
       <TextInput 
-        placeholder="Company" 
+        placeholder="Company Name" 
         style={styles.inputStyle} 
         value={company}
         onChangeText={setCompany} // Track the company input
+        placeholderTextColor="gray" // Light gray placeholder
       />
       <TextInput 
         secureTextEntry={false} 
@@ -58,6 +57,7 @@ const NewApplication = ({ navigateBack }) => {
         style={styles.inputStyle} 
         value={jobTitle}
         onChangeText={setJobTitle} // Track the job title input
+        placeholderTextColor="gray" // Light gray placeholder
       />
 
       {/* Dropdown Button */}
@@ -84,38 +84,38 @@ const NewApplication = ({ navigateBack }) => {
         />
       )}
 
-      {/* Submit Button */}
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Submit</Text>
-      </TouchableOpacity>
-
-      {/* Submit Link Button */}
+      {/* Link Input Field */}
       <TextInput 
-        placeholder=" link"
+        placeholder="Job Link (Optional)" 
         style={styles.inputStyle} 
         value={userLink}
-        onChangeText={setUserLink} // Track the job title input
+        onChangeText={setUserLink} // Track the link input
+        placeholderTextColor="gray" // Light gray placeholder
       />
-      {/* Submit Link Button */}
-      <TouchableOpacity style={styles.submitButtonAlt} onPress={
-          () => {
-            console.log(userLink); 
-            RequestLinkData(userLink, setJobTitle, setCompany);
-            setUserLink('');
-          }
-        }>
+
+      {/* Autofill Button */}
+      <TouchableOpacity style={styles.submitButtonAlt} onPress={() => {
+        console.log(userLink); 
+        RequestLinkData(userLink, setJobTitle, setCompany);
+        setUserLink('');
+      }}>
         <Text style={styles.submitButtonText}>Autofill with Link</Text>
       </TouchableOpacity>
+
       {/* Approved Sites Link */}
       <TouchableOpacity onPress={approvedSites}>
         <Text style={styles.hprlink}>(view compatible websites)</Text>
+      </TouchableOpacity>
+
+      {/* Submit Button */}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 function approvedSites() {
-  //Linking.openURL('https://example.com');
   Alert.alert(
     'Working Sites',
     'Google.\n\nDiversityJobs.\n\nSimplyHired.',
@@ -130,20 +130,12 @@ function approvedSites() {
 }
 
 function RequestLinkData(link, setJobTitle, setCompany) {
-  //supported careers websites:
-  // https://www.google.com/about/careers/applications/jobs/results/
-  // https://www.simplyhired.com/job/
-  // https://diversityjobs.com/
-  
-  // console.log('Link provided: ' + link);
-
   let jobBoard = '';
 
   let jobTitle = '';
   let company = '';
   let status = '';
 
-  //check if url is from supported domain
   if (link == "https://www.google.com/about/careers/applications/jobs/results/") {
     Alert.alert('Error', 'Search page not supported, please submit a direct listing link from Google', [{text: 'OK'}]);
     return;
@@ -155,7 +147,7 @@ function RequestLinkData(link, setJobTitle, setCompany) {
     return;
   } else if (link.startsWith("https://www.simplyhired.com/job/")) {
     jobBoard = "SimplyHired";
-    company = "n/a"; //fix later when web crawling isnt so daunting
+    company = "n/a"; 
   } else if (link.startsWith("https://diversityjobs.com/career/")) {
     jobBoard = "DiversityJobs";
   } else {
@@ -166,17 +158,13 @@ function RequestLinkData(link, setJobTitle, setCompany) {
   let htmlResponse = '';
   try {
     fetch(link)
-      .then(response => response.text()) // get the response as text (HTML)
+      .then(response => response.text()) 
       .then(html => {
-        //console.log(html); // log the HTML Data
         htmlResponse = html;
-        const jobTitle = processHTMLtitle(htmlResponse, jobBoard)
-        const company = processHTMLcompany(htmlResponse, jobBoard)
-        //console.log('Returning:', [jobTitle, company]);
+        const jobTitle = processHTMLtitle(htmlResponse, jobBoard);
+        const company = processHTMLcompany(htmlResponse, jobBoard);
         setJobTitle(jobTitle);
         setCompany(company);
-
-        return;
       });
   } catch (error) {
     console.error("err: " + error);
@@ -188,7 +176,7 @@ function processHTMLtitle(srcHTML, jobBoard) {
     const titleRegex = /<title>(.*?)<\/title>/;
     const match = srcHTML.match(titleRegex);
     const pJobTitle = (match && match[1].trim()) ?? '';
-    return pJobTitle
+    return pJobTitle;
   } else if (jobBoard == "SimplyHired") {
     const titleRegex = /<title>(.*?)<\/title>/;
     const match = srcHTML.match(titleRegex);
@@ -250,8 +238,9 @@ const styles = StyleSheet.create({
   },
   formLabel: {
     fontSize: 30,
+    fontFamily: 'Roboto',
     color: '#fff',
-    marginTop: 40, // Space below the Go Back button
+    marginTop: 40,
   },
   inputStyle: {
     marginTop: 20,
@@ -261,11 +250,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: 'white',
   },
-  // Dropdown button style
   dropdownButton: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: 'gray',
+    backgroundColor: '#484848',
     borderRadius: 10,
     width: 300,
     alignItems: 'center',
@@ -274,41 +262,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
-  // Dropdown item style
   dropdownItem: {
     padding: 15,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#525252',
     borderBottomWidth: 1,
     borderColor: '#ddd',
     width: 300,
   },
   dropdownItemText: {
     fontSize: 18,
-    color: '#356859',
+    color: 'white',
   },
-  // Go Back Button Styles
   goBackButton: {
-    position: 'absolute',  // Ensure it's fixed in the top-left corner
-    top: 40,               // Position the button 40px from the top of the screen
-    left: 20,              // Position the button 20px from the left of the screen
+    position: 'absolute',
+    top: 40,
+    left: 20,
     backgroundColor: 'black',
     borderRadius: 40,
     padding: 10,
-    zIndex: 10,            // Ensure it appears above other elements
-    width: 40,             // Make sure it's big enough to be clicked
-    height: 40,            // Make the button a square
-    justifyContent: 'center', // Center the text inside the button
-    alignItems: 'center',  // Center the text inside the button
+    zIndex: 10,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   goBackText: {
     fontSize: 18,
     color: '#fff',
   },
   hprlink: {
-    color: 'blue',
+    color: 'white',
     paddingTop: 10
   },
-  // Submit Button Styles
   submitButton: {
     marginTop: 30,
     padding: 15,
@@ -317,11 +302,10 @@ const styles = StyleSheet.create({
     width: 300,
     alignItems: 'center',
   },
-  // Submit Button Styles
   submitButtonAlt: {
     marginTop: 30,
     padding: 15,
-    backgroundColor: '#FF7777',
+    backgroundColor: '#004dcf',
     borderRadius: 10,
     width: 300,
     alignItems: 'center',
