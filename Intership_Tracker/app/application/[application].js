@@ -1,5 +1,5 @@
 
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { StyleSheet, Text, View, TextInput, Alert, TouchableOpacity} from 'react-native';
 import React from 'react';
 import { useEffect, useState } from 'react';
@@ -10,12 +10,12 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TabTwoScreen() {
   // get page param -> name the page
+  const router = useRouter();
   console.log(useLocalSearchParams())
   const {application} = useLocalSearchParams();
-  const [applicationData, setApplicationData] = useState("test");
+  //const [applicationData, setApplicationData] = useState("test");
 
   const [index, setIndex] = useState("-1")
-  const [applicationsList, setApplicationsList] = useState([]);
   const [newCompany, setNewCompany] = useState("");
   const [newJobTitle, setNewJobTitle] = useState("");
   const [newStatus, setNewStatus] = useState("");
@@ -30,41 +30,34 @@ export default function TabTwoScreen() {
     for(let i = 0; i < databaseOutput.apps.length; i++){
       const e = databaseOutput.apps[i];
       if( e.company === application){
-        setApplicationData(e);
+        setNewCompany(e.company)
+        setNewExtraNotes(e.extraNotes)
+        setNewJobTitle(e.Job_title)
+        setNewStatus(e.status)
         setIndex(i)
       }
     }
 
   }
 
-  async function writeData(){
-    let databaseOutput = await readFile() 
-    const data = applicationData;
-    data.company = newCompany;
-    data.Job_title = newJobTitle;
-    data.status = newStatus;
-    data.extraNotes = newExtraNotes;
-    console.log("new data " + data)
-    databaseOutput.apps[index] = applicationData;
-    await saveListToDatabase(databaseOutput.apps);
-    
+  async function writeData(event){
+    //event.persist()
+    try{
+      let databaseOutput = await readFile() 
+      const newData = databaseOutput.apps[index];
+      newData.company = newCompany;
+      newData.Job_title = newJobTitle;
+      newData.status = newStatus;
+      newData.extraNotes = newExtraNotes;
+      await saveListToDatabase(databaseOutput.apps);
+      router.navigate("./" + newCompany)
+    } catch (error){
+      console.error('Error reading file:', error);
+    }
   }
 
 
-  // use effect to only run once
-  useEffect(() => {
-    databaseHandler();
-  }, [])
-
-
-// saving the data
-useEffect(() => {
-  setNewCompany(applicationData.company)
-  setNewExtraNotes(applicationData.extraNotes)
-  setNewJobTitle(applicationData.Job_title)
-  setNewStatus(applicationData.status)
-}, [applicationData])
-
+  // 
 
   // set the title of the page
   const navigation = useNavigation();
@@ -76,15 +69,13 @@ useEffect(() => {
   }, [navigation]);
 
   // sets on exit and on enter hooks
-  /*
-   React.useCallback(() => {
+  useFocusEffect(
+  React.useCallback(() => {
+    databaseHandler();
       return () => {
-        // Cleanup code when the screen loses focus
-        writeData();
       };
     }, [])
-  );useFocusEffect(
-  */
+  );
    
 
   
@@ -94,17 +85,17 @@ useEffect(() => {
       
       <SafeAreaView style = {[styles.div]}>
         <Text style = {[styles.text, styles.title]}>Job Information</Text>
-        <Text style = {styles.text}>Application for company : "{applicationData.company}"</Text>
-        <Text style = {styles.text}>Application Status : {applicationData.status}</Text>
-        <Text style = {styles.text}>Position : {applicationData.Job_title}</Text>
-        <Text style = {styles.text}>Details : {applicationData.extraNotes}</Text>
+        <Text style = {styles.text}>Application for company : "{newCompany}"</Text>
+        <Text style = {styles.text}>Application Status : {newStatus}</Text>
+        <Text style = {styles.text}>Job Title : {newJobTitle}</Text>
+        <Text style = {styles.text}>Extra Notes:</Text>
         <TextInput 
         placeholder="Company" 
         style={styles.inputStyle} 
         value= {newExtraNotes}
         multiline = {true}
         numberOfLines={5}
-        onChange={setNewExtraNotes}
+        onChangeText={setNewExtraNotes}
         />
       </SafeAreaView>
 
