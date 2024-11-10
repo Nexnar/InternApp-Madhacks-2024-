@@ -109,7 +109,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   labelSize:{
-    fontSize: 10,
+    marginTop: 20,
+    fontSize: 30,
     fontWeight: 'bold'
   },
   labelSize2:{
