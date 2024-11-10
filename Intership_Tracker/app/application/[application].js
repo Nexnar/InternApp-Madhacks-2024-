@@ -2,19 +2,39 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { StyleSheet, Text, View, TextInput, Alert} from 'react-native';
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-
-
-
+import { readFile } from '@/scripts/database';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { Header } from 'react-native/Libraries/NewAppScreen';
+
 
 export default function TabTwoScreen() {
   // get page param -> name the page
   console.log(useLocalSearchParams())
   const {application} = useLocalSearchParams();
+  const [applicationData, setApplicationData] = useState("");
+  let dataFound = false;
 
+   // IMPORT DATA FROM Database
+   async function databaseHandler(){
+    let databaseOutput = await readFile() 
+  
+
+    databaseOutput.apps.forEach((e) => {
+      console.log("for looping each title " + e.company)
+      if(e.company === application){
+        setApplicationData(e);
+        datafound = true;
+        return;
+      }
+    })
+  }
+
+
+  // use effect to only run once
+  useEffect(() => {
+    databaseHandler();
+  }, [])
   // set the title of the page
   const navigation = useNavigation();
   useEffect(() => {
@@ -50,21 +70,13 @@ export default function TabTwoScreen() {
       
       <SafeAreaView style = {[styles.div]}>
         <Text style = {[styles.text, styles.title]}>General Data</Text>
-        <Text style = {styles.text}>Application for company : "{application}"</Text>
-        <Text style = {styles.text}>Application Status : </Text>
-        <Text style = {styles.text}>(As of)</Text>
+        <Text style = {styles.text}>Application for company : "{applicationData.company}"</Text>
+        <Text style = {styles.text}>Application Status : {applicationData.status}</Text>
       </SafeAreaView>
       <SafeAreaView style = {[styles.div]}>
         <Text style = {[styles.text, styles.title]}>Job Information</Text>
-        <Text style = {styles.text}>Position : [ ]</Text>
-        <Text style = {styles.text}>Recruiter Information: [ ]</Text>
-        <Text style = {styles.text}>Interview Date: [ ]</Text>
-        <Text style = {styles.text}>Interview Location: [ ]</Text>
-        <Text style = {styles.text}>Details</Text>
-        <TextInput style= {{backgroundColor:"white"}}>This is a test</TextInput>
-
-        <Text style = {styles.text}>Link to application Portal</Text>
-        <Text style = {styles.text}>Attach file</Text>
+        <Text style = {styles.text}>Position : {applicationData.Job_title}</Text>
+        <Text style = {styles.text}>Details : {applicationData.extraNotes}</Text>
       </SafeAreaView>
     </SafeAreaProvider>
   );
