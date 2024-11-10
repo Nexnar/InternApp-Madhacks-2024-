@@ -24,10 +24,25 @@ const Task = (props) => {
     router.navigate("/(tabs)")
   }
 
+  function getSquareColors(){
+    const propsList = props.text.split(" , ");
+    if(propsList[2] === "INTERVIEW"){
+      return <View style={[styles.square, styles.interview]}></View>
+    } else if(propsList[2] === "ACCEPTED"){
+      return <View style={[styles.square, styles.accepted]}></View>
+    } else if(propsList[2] === "REJECTED"){
+      return <View style={[styles.square, styles.rejected]}></View>
+    } else {
+      return <View style={[styles.square]}></View>
+    }
+  }
+
   return (
     isVisible && <View style={styles.item}>
       <View style={styles.itemLeft}>
-        <View style={styles.square}></View>
+        {
+          getSquareColors()
+        }
         <Text style={styles.itemText}>{props.text}</Text>
       </View>
       <TouchableOpacity onPress={handlePress}>
@@ -60,6 +75,24 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 15,
   },
+  accepted: {
+    backgroundColor: "green",
+    opacity: 1,
+
+  },
+  rejected: {
+    backgroundColor: "red",
+    opacity: 1,
+  },
+  pending: {
+    backgroundColor: "fff",
+    opacity: 1,
+  },
+  interview: {
+    backgroundColor: "blue",
+    opacity: 1,
+  },
+
   itemText: {
     maxWidth: '90%',
   },
