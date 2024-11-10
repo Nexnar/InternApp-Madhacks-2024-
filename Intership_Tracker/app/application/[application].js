@@ -1,6 +1,6 @@
 
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import { StyleSheet, Text, FlatList, TextInput, Alert, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, FlatList, TextInput, Alert, TouchableOpacity, Keyboard} from 'react-native';
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -157,7 +157,11 @@ export default function TabTwoScreen() {
         </SafeAreaView>
 
         <SafeAreaView style = {[styles.div]}>
-          <TouchableOpacity style={styles.submitButton} onPress={writeData}>
+          <TouchableOpacity style={styles.submitButton} onPress={() => {
+            writeData;
+            Keyboard.dismiss();
+          }
+          }>
             <Text style={styles.submitButtonText}>Save Changes</Text>
           </TouchableOpacity>
         </SafeAreaView>
