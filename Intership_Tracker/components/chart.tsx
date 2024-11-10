@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 
+
 const TimeBarGraph = ({ Edata }) => {
   const data = {
     labels: ['Accepted', 'Rejected', 'Interview', 'Pending', 'TOTAL'],

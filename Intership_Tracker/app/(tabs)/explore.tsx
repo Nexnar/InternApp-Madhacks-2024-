@@ -29,7 +29,7 @@ export default function TabTwoScreen() {
       else if(e.status === "PENDING"){
         setP(num => {return num + 1});
       }
-      else if(e.status ==- "INTERVIEW"){
+      else if(e.status === "INTERVIEW"){
         setI(num => {return num + 1});
       }
     })
@@ -72,7 +72,7 @@ export default function TabTwoScreen() {
         <Text style={[styles.grayColor, styles.labelSize]}>Pending: {p}</Text>
         <Text style={[styles.labelColor, styles.labelSize]}>Success Rate: {a / (a + r) * 100} %</Text>
         <Text>                           </Text>
-        <TimeBarGraph Edata={chartData}/>
+        <TimeBarGraph Edata={[a, r, i, p, t]}/>
       </SafeAreaView>
     </SafeAreaProvider>
   );
