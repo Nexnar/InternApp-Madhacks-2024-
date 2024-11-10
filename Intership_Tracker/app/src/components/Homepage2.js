@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { writeExampleDatabase, readFile } from '@/scripts/database';
+import { writeExampleDatabase, readFile, createDatabase, setUpDatabase } from '@/scripts/database';
 
 import {
   KeyboardAvoidingView,
@@ -19,17 +19,21 @@ export default function Homepage({ navigateToNewPage }) {
   const router = useRouter();
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
+  const [updatePage, setUpdatePage] = useState(1);
 
   // IMPORT DATA FROM Database
   async function databaseHandler(){
+    setUpdatePage(10);
     //await writeExampleDatabase()
-    let databaseOutput = await readFile() 
+    let databaseOutput = await readFile()
+    
+
     let apps = [];
 
 
     databaseOutput.apps.forEach((e) => {
       //console.log("for looping each title " + e.company)
-      apps.push(e.company);
+      apps.push(`${e.company} , ${e.Job_title} , ${e.status}`);
     })
 
     setTaskItems(apps)
@@ -118,7 +122,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
-    fontFamily: 'Verdana',
   },
   items: {
     marginTop: 20,

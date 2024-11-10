@@ -1,6 +1,7 @@
 import * as FileSystem from "expo-file-system";
 
 
+
 export async function createDatabase() {
     const fileUri = FileSystem.documentDirectory + 'database.json';
     const content = '{"apps" : []}'
@@ -25,6 +26,7 @@ export async function checkFilesSystem(){
     }
     return false;
   }
+
   
 export async function readFile(){
     try {
@@ -90,6 +92,6 @@ export function applicationFactory(company, title, status, extraNotes){
     "company" : company,
     "Job_title" : title,
     "status" : status,
-    "extraNotes" : extraNotes
+    "extraNotes" : extraNotes,
   }
 }
