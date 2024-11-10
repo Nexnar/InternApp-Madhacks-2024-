@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import HomePage from "../Homepage";
 
 
 export default function HomeScreen() {
@@ -28,12 +29,10 @@ export default function HomeScreen() {
           </View>
         </Pressable>
       </SafeAreaProvider>
-      
-      <SafeAreaView style = {styles.bodyDiv}>
-        <Link href = {{pathname: "../application/application", params: {id:"test"}}} style = {styles.text}> test </Link>
-        <Link href = {{pathname: "../application/application", params: {id:"bob"}}} style = {styles.text}> bob </Link>
-      </SafeAreaView>
 
+      <SafeAreaProvider style = {{flex:4}}>
+      <HomePage></HomePage>
+      </SafeAreaProvider>
     </SafeAreaProvider>
   );
 }
@@ -50,7 +49,7 @@ const styles = StyleSheet.create({
     color: "white"
   },
   bodyDiv:{
-    flex: 6
+    flex: 1
   },
   text:{
     color: "white"
