@@ -18,8 +18,8 @@ export default function Homepage() {
     //console.log("printing the database " + databaseOutput.apps)
 
     databaseOutput.apps.forEach((e) => {
-      console.log("for looping each title " + e.company)
-      apps.push(e.company);
+      console.log("for looping each title " + e)
+      apps.push(e);
     })
     //console.log(apps);
     setTaskItems(apps)

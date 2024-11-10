@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const Task = (props) => {
-
   return (
     <View style={styles.item}>
       <View style={styles.itemLeft}>
@@ -11,8 +10,8 @@ const Task = (props) => {
       </View>
       <View style={styles.circular}></View>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   item: {
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
   itemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   square: {
     width: 24,
