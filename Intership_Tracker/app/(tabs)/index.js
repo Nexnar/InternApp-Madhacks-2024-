@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {Link} from "expo-router";
 import { Image, StyleSheet, Text,View, Platform, Button, Pressable, Alert } from 'react-native';
 import { HelloWave } from '@/components/HelloWave';
@@ -8,9 +8,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import HomePage from "../Homepage";
+import { writeExampleDatabase, readFile } from "@/scripts/database";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function HomeScreen() {
+  // sets on exit and on enter hooks
+
+
   return (
     <SafeAreaProvider style = {{flexDirection: "column"}}>
 

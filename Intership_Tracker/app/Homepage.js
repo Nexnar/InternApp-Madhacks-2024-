@@ -1,12 +1,31 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView } from 'react-native';
 import Task from './Task';
 import {useRouter } from 'expo-router';
+import { writeExampleDatabase, readFile } from "@/scripts/database";
 
 export default function Homepage() {
   const router = useRouter();
   const [task, setTask] = useState();
   const [taskItems, setTaskItems] = useState([]);
+  const [database, setDatabase] = useState([]);
+  
+  async function databaseHandler(){
+    await writeExampleDatabase()
+    let output = await readFile() 
+    setDatabase(output.apps);
+    console.log("printing the database " + database)
+    database.forEach((e) => {
+      console.log("for looping each title " + e)
+      setTask(e.company);
+      handleAddTask();
+    })
+    console.log(taskItems);
+  }
+
+  useEffect(() => {
+    databaseHandler();
+  }, [])
 
   const handleAddTask = () => {
     Keyboard.dismiss();

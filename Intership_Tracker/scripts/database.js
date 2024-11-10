@@ -31,7 +31,7 @@ export async function readFile(){
       const fileUri = FileSystem.documentDirectory + 'database.json';
       const content = await FileSystem.readAsStringAsync(fileUri);
       const jsonFormat = JSON.parse(content)
-      console.log('File content:', jsonFormat);
+      //console.log('File content:', jsonFormat);
       return jsonFormat;
     } catch (error) {
       console.error('Error reading file:', error);
@@ -52,4 +52,34 @@ export async function writeToDatabase(input){
         console.error('Error reading file:', error);
         return null;
       }
+}
+
+export async function writeExampleDatabase(){
+
+  let content = {
+    apps: []
+  };
+  content.apps.push(applicationFactory("Roblox", "Scammer", "Applied", "nothing"))
+  content.apps.push(applicationFactory("John Deer", "Engineer", "Note Applied", "must apply by the 25th"))
+  content = JSON.stringify(content);
+  //console.log(content);
+
+  const fileUri = FileSystem.documentDirectory + 'database.json';
+  
+
+  try {
+    await FileSystem.writeAsStringAsync(fileUri, content);
+    console.log('File written successfully!');
+  } catch (error) {
+    console.error('Error writing file:', error);
+  }
+}
+
+export function applicationFactory(company, title, status, extraNotes){
+  return {
+    "company" : company,
+    "Job_title" : title,
+    "status" : status,
+    "extraNotes" : extraNotes
+  }
 }

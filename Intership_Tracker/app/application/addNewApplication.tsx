@@ -29,6 +29,7 @@ export default function NewAppPage() {
   const [recruiterEmail, setRecruiterEmail] = useState("...");
 
   async function handleFileSystem(){
+    await createDatabase();
     const check = await checkFilesSystem();
     if(check == false){
         console.log("making new database!");
